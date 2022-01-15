@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e -u -o pipefail
+
+main() {
+    if has_src_changed; then
+        exit_on_lint_error
+    fi
+}
+
+exit_on_lint_error() {
+    $(which just) lint
+}
+
+has_src_changed() {
+    git diff --cached --name-only | \
+        grep -q -E "(crates/)"
+}
+
+main

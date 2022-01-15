@@ -1,0 +1,23 @@
+{
+  "name": "vulner",
+  "version": "0.0.0",
+  "description": "Vulner internal scripts",
+  "license": "MPL-2.0",
+  "author": "mrl5",
+  "scripts": {
+    "prepare": "git config --local core.hooksPath .githooks || echo 'Could not set git hooks'",
+    "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
+    "recommended-bump": "conventional-recommended-bump -p angular",
+    "lint:commit": "commitlint"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@commitlint/cli": "^13.2.1",
+    "@commitlint/config-conventional": "^13.2.0",
+    "conventional-changelog-cli": "^2.1.1",
+    "conventional-recommended-bump": "^6.1.0"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}

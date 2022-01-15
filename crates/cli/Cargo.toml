@@ -1,0 +1,12 @@
+[package]
+name = "cli"
+version = "0.1.0"
+authors = ["mrl5"]
+edition = "2021"
+description = "CLI for vulner"
+license = "MPL-2.0"
+keywords = ["cve", "cpe", "nvd", "linux", "funtoo", "gentoo"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+cpe-tag = { path = "../cpe-tag" }

@@ -1,0 +1,10 @@
+[package]
+name = "cpe-tag"
+version = "0.1.0"
+authors = ["mrl5"]
+edition = "2021"
+description = "Generates valid NVD CPEs"
+license = "MPL-2.0"
+keywords = ["cpe", "nvd", "linux"]
+
+[dependencies]

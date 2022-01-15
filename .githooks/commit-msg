@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e -u -o pipefail
+
+main() {
+    exit_on_invalid_commit_msg "$1"
+}
+
+exit_on_invalid_commit_msg() {
+    cat "$1" |
+        grep -v -e '^#' |
+            npm run lint:commit
+}
+
+main "$1"

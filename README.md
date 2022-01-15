@@ -17,6 +17,17 @@ Notice how easy is to list all [CVE]s for given [CPE]. Using [CPE]s allows you
 to have reliable vulnerability tracker.
 
 
+## Howto build
+```bash
+$ cargo build --release
+```
+or you can use just (if you don't have it yet then here is how to install
+https://github.com/casey/just#packages)
+```bash
+$ just build
+```
+
+
 [Funtoo Linux]: https://www.funtoo.org/
 [CVE]: https://nvd.nist.gov/vuln
 [CPE]: https://nvd.nist.gov/products/cpe
