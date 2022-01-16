@@ -8,3 +8,4 @@ license = "MPL-2.0"
 keywords = ["cpe", "nvd", "linux"]
 
 [dependencies]
+pyo3 = { version = "0.15.1", features = ["auto-initialize"] }

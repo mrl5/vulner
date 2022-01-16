@@ -43,7 +43,7 @@ If you need more examples check commits on master branch.
 
 ## DEV CLI
 ```bash
-just init
+just init-dev
 just lint
 just test
 ```

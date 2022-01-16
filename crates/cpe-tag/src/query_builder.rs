@@ -5,4 +5,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-pub mod query_builder;
+use std::error::Error;
+
+mod py_query_builder;
+
+pub trait CpeQueryBuilder {
+    fn get_grep_patterns(&self, serialized_json: &str) -> Result<String, Box<dyn Error>>;
+}

@@ -1,6 +1,11 @@
 init:
+    git submodule update --init
+
+init-dev: init
     npm install
     git config --local core.hooksPath .githooks || echo 'Could not set git hooks'
+
+dev-init: init-dev
 
 lint: fmt clippy check-license-headers
 
