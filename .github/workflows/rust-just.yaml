@@ -1,4 +1,4 @@
-name: Rust with just
+name: master
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
       run: just lint
 
     - name: Build
-      run: just build
+      run: cargo build --verbose
 
     - name: Run tests
       run: just test
