@@ -1,5 +1,5 @@
 # vulner
-[![master status](https://github.com/mrl5/vulner/actions/workflows/rust-just.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/rust-just.yaml/badge.svg?event=push)
+[![master status](https://github.com/mrl5/vulner/actions/workflows/rust-just.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/rust-just.yaml)
 
 *Use case 1)* as a [Funtoo Linux] user I want to have awareness about CVEs on my system
 
