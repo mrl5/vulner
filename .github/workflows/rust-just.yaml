@@ -1,0 +1,31 @@
+name: Rust with just
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - uses: extractions/setup-just@v1
+
+    - name: Lint
+      run: just lint
+
+    - name: Build
+      run: just build
+
+    - name: Run tests
+      run: just test
