@@ -19,12 +19,13 @@ to have reliable vulnerability tracker.
 
 ## Howto build
 ```bash
+$ git submodule update --init
 $ cargo build --release
 ```
 or you can use just (if you don't have it yet then here is how to install
 https://github.com/casey/just#packages)
 ```bash
-$ just build
+$ just init build
 ```
 
 
