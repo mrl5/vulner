@@ -8,5 +8,9 @@ license = "MPL-2.0"
 keywords = ["cve", "cpe", "nvd", "linux", "funtoo", "gentoo"]
 categories = ["command-line-utilities"]
 
+[[bin]]
+name = "vulner"
+path = "src/main.rs"
+
 [dependencies]
 cpe-tag = { path = "../cpe-tag" }
