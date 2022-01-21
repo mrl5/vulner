@@ -15,6 +15,9 @@ test:
 build:
     cargo build --release
 
+install: build
+    cargo install --path crates/cli/
+
 fmt:
     rustfmt crates/**/src/*.rs
 
