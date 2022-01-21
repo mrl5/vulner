@@ -1,6 +1,8 @@
 # vulner
 [![master status](https://github.com/mrl5/vulner/actions/workflows/rust-just.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/rust-just.yaml)
 
+Discover CVEs for packages installed by the portage.
+
 *Use case 1)* as a [Funtoo Linux] user I want to have awareness about CVEs on my system
 
 **DISCLAIMER**

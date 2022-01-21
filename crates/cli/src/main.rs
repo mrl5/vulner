@@ -5,6 +5,21 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use structopt::{clap::AppSettings, StructOpt};
+
+#[derive(StructOpt)]
+#[structopt(
+    name = "vulner",
+    about = env!("CARGO_PKG_DESCRIPTION"),
+    global_settings(&[
+      AppSettings::ColoredHelp
+    ]),
+)]
+struct CliOptions {}
+
 fn main() {
+    env_logger::init();
+    log::debug!("initialized logger");
+    let options = CliOptions::from_args();
     println!("Hello, world!");
 }
