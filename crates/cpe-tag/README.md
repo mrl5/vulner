@@ -14,7 +14,7 @@ Generates valid NVD CPEs.
 ## About
 
 `cpe-tag` provides interface that can be used for obtaining **A VALID AND
-EXISTING** CPE for given package, software or technology system.
+EXISTING** CPEs for given package, software or technology system.
 
 
 ## CVEs, CPEs, WTFs
@@ -28,3 +28,4 @@ have reliable vulnerability tracker.
 
 * https://nvd.nist.gov/products/cpe
 * The CPE 2.3 XML Schema: https://csrc.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd
+* https://cpe.mitre.org/about/
