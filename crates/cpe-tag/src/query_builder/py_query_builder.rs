@@ -6,10 +6,20 @@ pub struct PythonAdapter {}
 
 impl CpeQueryBuilder for PythonAdapter {
     fn get_grep_patterns(&self, serialized_json: &str) -> Result<String, Box<dyn Error>> {
-        let py_errors = include_str!("../../python/cpe_tag/errors.py");
-        let py_cpe = include_str!("../../python/cpe_tag/cpe.py");
-        let py_serializers = include_str!("../../python/cpe_tag/serializers.py");
-        let py_integrator = include_str!("../../python/integrator.py");
+        let py_errors = include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/python/cpe_tag/errors.py"
+        ));
+        let py_cpe = include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/python/cpe_tag/cpe.py"
+        ));
+        let py_serializers = include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/python/cpe_tag/serializers.py"
+        ));
+        let py_integrator =
+            include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/python/integrator.py"));
 
         let from_python = Python::with_gil(|py| -> PyResult<Py<PyAny>> {
             PyModule::from_code(py, py_errors, "cpe_tag.errors", "cpe_tag.errors")?;
