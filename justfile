@@ -7,7 +7,7 @@ init-dev: init
 
 dev-init: init-dev
 
-lint: fmt clippy check-license-headers
+lint: fmt check-license-headers clippy
 
 test:
     cargo test
@@ -20,11 +20,12 @@ install: build
 
 fmt:
     rustfmt crates/**/src/*.rs
+    rustfmt crates/**/src/**/*.rs
 
 clippy:
     cargo clippy
 
 check-license-headers:
-    for rust_file in $(ls crates/**/src/*.rs); do \
+    for rust_file in $(ls crates/**/src/*.rs && ls crates/**/src/**/*.rs); do \
         ./scripts/check-license-header.sh "$rust_file"; \
     done

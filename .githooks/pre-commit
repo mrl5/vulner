@@ -9,7 +9,11 @@ main() {
 }
 
 exit_on_lint_error() {
-    $(which just) lint
+    for file in $(git diff --cached --name-only | grep -E '.rs$'); do
+        rustfmt "$file"
+        ./scripts/check-license-header.sh "$file"
+    done
+    cargo clippy
 }
 
 has_src_changed() {

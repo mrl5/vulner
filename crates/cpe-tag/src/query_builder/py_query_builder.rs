@@ -1,3 +1,10 @@
+/*
+ * SPDX-License-Identifier: MPL-2.0
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
 use super::CpeQueryBuilder;
 use pyo3::prelude::*;
 use std::error::Error;
@@ -49,24 +56,24 @@ mod tests {
         let test_data = [
             [
                 r#"{"name":"busybox","versions":[{"version":"1.31.0"},{"version":"9999"}]}"#,
-                ":busybox:1\\.31\\.0:[\\*\\-]:[^:]+:[^:]+:[^:]+:(linux|\\*):[^:]+:[^:]"
+                r#":busybox:1\.31\.0:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]"#,
             ],
             [
                 r#"{"name":"busybox","versions":[{"version":"1.31.0"},{"version":"1.29.3"}]}"#,
-                ":busybox:1\\.31\\.0:[\\*\\-]:[^:]+:[^:]+:[^:]+:(linux|\\*):[^:]+:[^:]|:busybox:1\\.29\\.3:[\\*\\-]:[^:]+:[^:]+:[^:]+:(linux|\\*):[^:]+:[^:]"
+                r#":busybox:1\.31\.0:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]|:busybox:1\.29\.3:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]"#,
             ],
             [
                 r#"[{"name":"libxml2","versions":[{"version":"2.9.10-r5"}]},{"name":"openssh","versions":[{"version":"8.4_p1-r3"}]}]"#,
-                ":libxml2:2\\.9\\.10:[\\*\\-]:[^:]+:[^:]+:[^:]+:(linux|\\*):[^:]+:[^:]|:openssh:8\\.4:(p1|\\*):[^:]+:[^:]+:[^:]+:(linux|\\*):[^:]+:[^:]"
+                r#":libxml2:2\.9\.10:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]|:openssh:8\.4:(p1|\*):[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]"#,
             ],
             [
                 r#"{"name":"google-chrome","versions":[{"version":"97.0.4692.71"}]}"#,
-                "google:chrome:97\\.0\\.4692\\.71:[\\*\\-]:[^:]+:[^:]+:[^:]+:(linux|\\*):[^:]+:[^:]"
+                r#"google:chrome:97\.0\.4692\.71:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]"#,
             ],
             [
                 r#"{"name":"nicotine+","versions":[{"version":"1.4.1-r1"}]}"#,
-                ":nicotine\\+:1\\.4\\.1:[\\*\\-]:[^:]+:[^:]+:[^:]+:(linux|\\*):[^:]+:[^:]"
-            ]
+                r#":nicotine\+:1\.4\.1:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]"#,
+            ],
         ];
         for d in test_data {
             let [serialized_json, expected] = d;
