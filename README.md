@@ -28,8 +28,22 @@ $ cargo build --release && cargo install --path crates/cli/
 or you can use just (if you don't have it yet then here is how to install
 https://github.com/casey/just#packages)
 ```bash
-$ just init build install
+$ just init build install check-runtime-deps
 ```
+
+
+## Howto run
+```bash
+$ ./scripts/check-runtime-deps.sh || emerge -av dev-python/jsonschema
+$ vulner --help
+```
+
+
+## Why `vulner` needs some python packages at runtime?
+
+Because of reasons described in
+[0001-runtime-python-dependencies.md](crates/cpe-tag/docs/adr/0001-runtime-python-dependencies.md)
+ADR.
 
 
 [Funtoo Linux]: https://www.funtoo.org/

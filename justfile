@@ -29,3 +29,6 @@ check-license-headers:
     for rust_file in $(ls crates/**/src/*.rs && ls crates/**/src/**/*.rs); do \
         ./scripts/check-license-header.sh "$rust_file"; \
     done
+
+check-runtime-deps:
+    ./scripts/check-runtime-deps.sh
