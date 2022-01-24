@@ -28,7 +28,9 @@ impl CpeQueryBuilder for PythonAdapter {
         let py_integrator =
             include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/python/integrator.py"));
 
+        log::debug!("Acquiring the global interpreter lock");
         let from_python = Python::with_gil(|py| -> PyResult<Py<PyAny>> {
+            log::debug!("importing python files as modules ...");
             PyModule::from_code(py, py_errors, "cpe_tag.errors", "cpe_tag.errors")?;
             PyModule::from_code(py, py_cpe, "cpe_tag.cpe", "cpe_tag.cpe")?;
             PyModule::from_code(
@@ -40,6 +42,8 @@ impl CpeQueryBuilder for PythonAdapter {
             let integrator: Py<PyAny> = PyModule::from_code(py, py_integrator, "", "")?
                 .getattr("run")?
                 .into();
+
+            log::debug!("executing python code ...");
             integrator.call1(py, (serialized_json,))
         });
 

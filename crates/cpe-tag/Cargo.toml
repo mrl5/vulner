@@ -9,3 +9,4 @@ keywords = ["cpe", "nvd", "linux"]
 
 [dependencies]
 pyo3 = { version = "0.15.1", features = ["auto-initialize"] }
+log = "0.4.14"
