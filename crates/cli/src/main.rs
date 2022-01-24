@@ -5,9 +5,12 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use std::env;
+use std::process::exit;
 use structopt::{clap::AppSettings, StructOpt};
+mod command;
 
-#[derive(StructOpt)]
+#[derive(Debug, StructOpt)]
 #[structopt(
     name = "vulner",
     about = env!("CARGO_PKG_DESCRIPTION"),
@@ -15,11 +18,22 @@ use structopt::{clap::AppSettings, StructOpt};
       AppSettings::ColoredHelp
     ]),
 )]
-struct CliOptions {}
+struct CliOptions {
+    #[structopt(subcommand)]
+    cmd: command::Command,
+}
 
-fn main() {
+#[tokio::main]
+async fn main() {
     env_logger::init();
     log::debug!("initialized logger");
-    let options = CliOptions::from_args();
-    println!("Hello, world!");
+    let opts = CliOptions::from_args();
+
+    exit(match command::execute(opts.cmd).await {
+        Ok(_) => 0,
+        Err(e) => {
+            eprintln!("error: {}", e);
+            1
+        }
+    });
 }
