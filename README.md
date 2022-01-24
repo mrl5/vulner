@@ -34,7 +34,7 @@ $ just init build install check-runtime-deps
 
 ## Howto run
 ```bash
-$ ./scripts/check-runtime-deps.sh || emerge -av dev-python/jsonschema
+$ ./scripts/check-runtime-deps.sh
 $ vulner --help
 ```
 

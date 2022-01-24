@@ -9,7 +9,7 @@ main () {
 }
 
 check_python_deps () {
-    python3 -c 'import jsonschema'
+    python3 -c ''
 }
 
 main "$@"
