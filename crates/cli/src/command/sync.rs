@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use crate::utils::get_file_checksum;
 use security_advisories::http::get_client;
 use security_advisories::service::{download_cpe_match_feed, fetch_feed_checksum, CPE_MATCH_FEED};
 use std::error::Error;
@@ -24,7 +25,7 @@ pub async fn execute(feed_path: PathBuf) -> Result<(), Box<dyn Error>> {
         gunzip(&feed_path.join(CPE_MATCH_FEED)).await?;
     } else {
         let remote_checksum = fetch_feed_checksum(&client);
-        let fs_checksum = get_cpe_feed_checksum(&file_path);
+        let fs_checksum = get_file_checksum(&file_path);
 
         let (remote_checksum, fs_checksum) = join!(remote_checksum, fs_checksum);
         if remote_checksum? != fs_checksum? {
@@ -40,20 +41,8 @@ pub async fn execute(feed_path: PathBuf) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-async fn get_cpe_feed_checksum(path: &Path) -> Result<String, Box<dyn Error>> {
-    log::info!("computing checksum of {:?} ...", path.as_os_str());
-    let cmd = "/usr/bin/sha256sum";
-    let output = Command::new(cmd).arg(path).output().await?;
-
-    if !output.status.success() {
-        handle_process_err(output.status.code(), cmd)?;
-    }
-
-    let checksum = String::from_utf8(output.stdout)?;
-    Ok(checksum.split(' ').next().unwrap().to_owned())
-}
-
 async fn gunzip(target: &Path) -> Result<(), Box<dyn Error>> {
+    // todo: rust native
     log::info!("uncompressing {:?} ...", target.as_os_str());
     let cmd = "/bin/gunzip";
     let status = Command::new(cmd)

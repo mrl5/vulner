@@ -9,6 +9,7 @@ use std::env;
 use std::process::exit;
 use structopt::{clap::AppSettings, StructOpt};
 mod command;
+mod utils;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
