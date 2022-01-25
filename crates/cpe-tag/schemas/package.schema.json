@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://localhost/schemas/package",
+  "title": "raw package",
+  "type": "object",
+  "required": ["name", "versions"],
+  "properties": {
+    "name": {"type": "string", "description": "package name"},
+    "homepages": {
+      "type": "array",
+      "items": {"type": "string", "description": "project homepage"}
+    },
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version"],
+        "properties": {
+          "version": {"type": "string", "description": "package version"}
+        }
+      }
+    }
+  }
+}

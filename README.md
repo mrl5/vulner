@@ -25,7 +25,7 @@ to have reliable vulnerability tracker.
 $ git submodule update --init
 $ cargo build --release && cargo install --path crates/cli/
 ```
-or you can use just (if you don't have it yet then here is how to install
+or you can use `just` - fancy `make` replacement (check out
 https://github.com/casey/just#packages)
 ```bash
 $ just init build install check-runtime-deps
@@ -37,6 +37,7 @@ $ just init build install check-runtime-deps
 $ ./scripts/check-runtime-deps.sh
 $ vulner --help
 $ RUST_LOG=debug vulner sync
+$ vulner cpe '[{"name": "busybox", "versions": [{"version": "1.29.3"}, {"version": "1.31.0"}]}, {"name":"libxml2", "versions":[{"version":"2.9.10-r5"}]}]'
 ```
 
 

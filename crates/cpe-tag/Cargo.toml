@@ -10,3 +10,6 @@ keywords = ["cpe", "nvd", "linux"]
 [dependencies]
 pyo3 = { version = "0.15.1", features = ["auto-initialize"] }
 log = "0.4.14"
+grep = "0.2.8"
+jsonschema = "0.14.0"
+serde_json = "1.0.78"

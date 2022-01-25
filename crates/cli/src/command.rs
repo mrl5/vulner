@@ -8,26 +8,43 @@
 use std::error::Error;
 use std::path::PathBuf;
 use structopt::StructOpt;
+mod cpe;
 mod sync;
+
+pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
+    match cmd {
+        Command::Sync { cpe_feed } => sync::execute(cpe_feed.feed_dir).await,
+        Command::Cpe {
+            cpe_batch,
+            cpe_feed,
+        } => cpe::execute(cpe_batch, cpe_feed.feed_dir).await,
+    }
+}
 
 #[derive(Debug, StructOpt)]
 pub enum Command {
     #[structopt(name = "sync", about = "Synchronizes CPE match feed")]
     Sync {
-        #[structopt(
-            short = "d",
-            long = "feed-dir",
-            default_value = "/tmp/vulner/feeds/json",
-            env = "VULNER_FEED_DIR"
-        )]
-        feed_dir: PathBuf,
+        #[structopt(flatten)]
+        cpe_feed: CpeFeedOpt,
+    },
+
+    #[structopt(name = "cpe", about = "Provides valid and existing CPEs")]
+    Cpe {
+        #[structopt(flatten)]
+        cpe_feed: CpeFeedOpt,
+        cpe_batch: String,
     },
     // todo: scan
-    // todo: cpe
 }
 
-pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
-    match cmd {
-        Command::Sync { feed_dir } => sync::execute(feed_dir).await,
-    }
+#[derive(Debug, StructOpt)]
+pub struct CpeFeedOpt {
+    #[structopt(
+        short = "d",
+        long = "feed-dir",
+        default_value = "/tmp/vulner/feeds/json",
+        env = "VULNER_FEED_DIR"
+    )]
+    feed_dir: PathBuf,
 }
