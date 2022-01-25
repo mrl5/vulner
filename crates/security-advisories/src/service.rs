@@ -11,6 +11,7 @@ use std::path::Path;
 mod nvd;
 
 pub const CPE_MATCH_FEED: &str = nvd::CPE_MATCH_FEED;
+pub const CPE_MATCH_FEED_GZ: &str = nvd::CPE_MATCH_FEED_GZ;
 
 pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Error>> {
     log::info!("fetching CPE match feed checksum ...");

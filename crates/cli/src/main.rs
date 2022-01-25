@@ -33,7 +33,7 @@ async fn main() {
     exit(match command::execute(opts.cmd).await {
         Ok(_) => 0,
         Err(e) => {
-            eprintln!("error: {}", e);
+            log::error!("{}", e);
             1
         }
     });
