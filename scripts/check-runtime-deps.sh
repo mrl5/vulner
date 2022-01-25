@@ -11,7 +11,6 @@ main () {
 
 check_os_deps () {
     /bin/gunzip --version > /dev/null
-    /usr/bin/sha256sum --version > /dev/null
 }
 
 check_python_deps () {

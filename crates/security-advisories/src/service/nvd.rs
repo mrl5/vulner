@@ -15,8 +15,9 @@ use std::path::Path;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
+pub const CPE_MATCH_FEED: &str = "nvdcpematch-1.0.json";
+pub const CPE_MATCH_FEED_GZ: &str = "nvdcpematch-1.0.json.gz";
 const BASE_URL: &str = "https://nvd.nist.gov/feeds/json/cpematch/1.0";
-pub const CPE_MATCH_FEED: &str = "nvdcpematch-1.0.json.gz";
 const CPE_MATCH_FEED_META: &str = "nvdcpematch-1.0.meta";
 
 pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Error>> {
@@ -24,6 +25,7 @@ pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Erro
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(reqwest::header::ACCEPT, "text/plain".parse()?);
     let res = client.get(&url).headers(headers).send().await?;
+
     let meta = res.text().await?;
     Ok(get_checksum(meta)?)
 }
@@ -32,7 +34,7 @@ pub async fn download_cpe_match_feed(
     client: &Client,
     feed_path: &Path,
 ) -> Result<(), Box<dyn Error>> {
-    let url = format!("{}/{}", BASE_URL, CPE_MATCH_FEED);
+    let url = format!("{}/{}", BASE_URL, CPE_MATCH_FEED_GZ);
     let res = client.get(&url).send().await?;
     let total_size = res
         .content_length()
@@ -42,7 +44,7 @@ pub async fn download_cpe_match_feed(
     let mut stream = res.bytes_stream();
     let mut downloaded: u64 = 0;
     let mut dest = {
-        let f = feed_path.join(CPE_MATCH_FEED);
+        let f = feed_path.join(CPE_MATCH_FEED_GZ);
         File::create(f).await?
     };
     while let Some(item) = stream.next().await {

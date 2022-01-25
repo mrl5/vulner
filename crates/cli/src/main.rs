@@ -9,6 +9,7 @@ use std::env;
 use std::process::exit;
 use structopt::{clap::AppSettings, StructOpt};
 mod command;
+mod utils;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
@@ -32,7 +33,7 @@ async fn main() {
     exit(match command::execute(opts.cmd).await {
         Ok(_) => 0,
         Err(e) => {
-            eprintln!("error: {}", e);
+            log::error!("{}", e);
             1
         }
     });

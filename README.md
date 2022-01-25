@@ -36,6 +36,7 @@ $ just init build install check-runtime-deps
 ```bash
 $ ./scripts/check-runtime-deps.sh
 $ vulner --help
+$ RUST_LOG=debug vulner sync
 ```
 
 
