@@ -26,9 +26,7 @@ clippy:
     cargo clippy
 
 check-license-headers:
-    for rust_file in $(ls crates/**/src/*.rs && ls crates/**/src/**/*.rs); do \
-        ./scripts/check-license-header.sh "$rust_file"; \
-    done
+    ./scripts/check-license-header-all-files.sh
 
 check-runtime-deps:
     ./scripts/check-runtime-deps.sh
