@@ -1,12 +1,13 @@
-import json
-
 from cpe_tag.cpe import convert_quasi_cpe_to_regex
 from cpe_tag.serializers import serialize_package_json
 
 
-def run(target: str) -> str:
-    parsed = json.loads(target)
-    cpe_patterns = handle_list(parsed) if isinstance(parsed, list) else handle_dict(parsed)
+def run(payload: list) -> str:
+    if isinstance(payload, list):
+        cpe_patterns = handle_list(payload)
+    else:
+        raise TypeError(f"expected list got {type(payload)}")
+
     return "|".join(cpe_patterns)
 
 

@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use crate::validators::Package;
 use grep::matcher::Matcher;
 use grep::regex::RegexMatcher;
 use grep::searcher::sinks::UTF8;
@@ -13,8 +14,8 @@ use std::error::Error;
 use std::path::Path;
 mod py_query_builder;
 
-pub fn get_grep_patterns(serialized_json: &str) -> Result<String, Box<dyn Error>> {
-    py_query_builder::get_grep_patterns(serialized_json)
+pub fn get_grep_patterns(packages: &[Package]) -> Result<String, Box<dyn Error>> {
+    py_query_builder::get_grep_patterns(packages)
 }
 
 pub fn query(pattern: String, feed: &Path) -> Result<Vec<String>, Box<dyn Error>> {

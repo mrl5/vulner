@@ -6,12 +6,25 @@
  */
 
 use jsonschema::{Draft, JSONSchema};
-use serde_json::{from_str, Value};
+use serde::{Deserialize, Serialize};
+use serde_json::{from_str, from_value, Value};
 use std::error::Error;
 use std::io;
 
-pub fn validate_packages_batch(batch: &Value) -> Result<(), Box<dyn Error>> {
-    validate(batch, get_packages_batch_schema())
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct Package {
+    name: String,
+    versions: Vec<Version>,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct Version {
+    version: String,
+}
+
+pub fn into_validated_packages(batch: &Value) -> Result<Vec<Package>, Box<dyn Error>> {
+    validate(batch, get_packages_batch_schema())?;
+    Ok(from_value::<Vec<Package>>(batch.to_owned())?)
 }
 
 pub fn validate_cpe_batch(batch: &Value) -> Result<(), Box<dyn Error>> {
@@ -82,14 +95,17 @@ fn get_cpe_batch_schema() -> JSONSchema {
 mod tests {
     use super::*;
 
+    fn get_valid_packages_batch() -> Value {
+        from_str(r#"[{"name": "busybox", "versions": [{"version": "1.29.3"}]}]"#).unwrap()
+    }
+
     #[test]
     fn it_should_validate_packages_batch() {
-        let valid_batch =
-            from_str(r#"[{"name": "busybox", "versions": [{"version": "1.29.3"}]}]"#).unwrap();
+        let valid_batch = get_valid_packages_batch();
         let invalid_batch =
             from_str(r#"{"name": "busybox", "versions": [{"version": "1.29.3"}]}"#).unwrap();
-        assert!(validate_packages_batch(&valid_batch).is_ok());
-        assert!(validate_packages_batch(&invalid_batch).is_err());
+        assert!(into_validated_packages(&valid_batch).is_ok());
+        assert!(into_validated_packages(&invalid_batch).is_err());
     }
 
     #[test]
