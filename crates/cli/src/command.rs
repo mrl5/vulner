@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use crate::input::get_input;
 use std::error::Error;
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -18,8 +19,8 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
         Command::Cpe {
             packages_batch,
             cpe_feed,
-        } => cpe::execute(packages_batch, cpe_feed.feed_dir).await,
-        Command::Cve { cpe_batch } => cve::execute(cpe_batch).await,
+        } => cpe::execute(get_input(packages_batch)?, cpe_feed.feed_dir).await,
+        Command::Cve { cpe_batch } => cve::execute(get_input(cpe_batch)?).await,
     }
 }
 
@@ -33,13 +34,13 @@ pub enum Command {
 
     #[structopt(name = "cpe", about = "Provides valid and existing CPEs")]
     Cpe {
-        packages_batch: String,
+        packages_batch: Option<String>,
         #[structopt(flatten)]
         cpe_feed: CpeFeedOpt,
     },
 
     #[structopt(name = "cve", about = "Lists CVEs for given CPEs")]
-    Cve { cpe_batch: String },
+    Cve { cpe_batch: Option<String> },
     // todo: scan
 }
 
