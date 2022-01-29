@@ -6,14 +6,14 @@
  */
 
 use cpe_tag::query_builder::{get_grep_patterns, query};
-use cpe_tag::validators::validate_batch;
+use cpe_tag::validators::validate_packages_batch;
 use security_advisories::service::CPE_MATCH_FEED;
 use std::error::Error;
 use std::path::PathBuf;
 
 pub async fn execute(batch: String, feed_dir: PathBuf) -> Result<(), Box<dyn Error>> {
     log::info!("validating input ...");
-    validate_batch(batch.as_ref())?;
+    validate_packages_batch(batch.as_ref())?;
 
     log::info!("building query ...");
     let pattern = get_grep_patterns(batch.as_ref())?;

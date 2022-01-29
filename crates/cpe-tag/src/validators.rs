@@ -10,9 +10,9 @@ use serde_json::from_str;
 use std::error::Error;
 use std::io;
 
-pub fn validate_batch(batch: &str) -> Result<(), Box<dyn Error>> {
+pub fn validate_packages_batch(batch: &str) -> Result<(), Box<dyn Error>> {
     let instance = from_str(batch)?;
-    let compiled = get_batch_schema();
+    let compiled = get_packages_batch_schema();
 
     let res = match compiled.validate(&instance) {
         Ok(_) => Ok(()),
@@ -30,7 +30,7 @@ pub fn validate_batch(batch: &str) -> Result<(), Box<dyn Error>> {
     res
 }
 
-fn get_batch_schema() -> JSONSchema {
+fn get_packages_batch_schema() -> JSONSchema {
     let package_schema = from_str(include_str!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/schemas/package.schema.json"
@@ -38,7 +38,7 @@ fn get_batch_schema() -> JSONSchema {
     .unwrap();
     let batch_schema: serde_json::Value = from_str(include_str!(concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/schemas/batch.schema.json"
+        "/schemas/packages-batch.schema.json"
     )))
     .unwrap();
 
@@ -60,7 +60,7 @@ mod tests {
     fn it_should_validate() {
         let valid_batch = r#"[{"name": "busybox", "versions": [{"version": "1.29.3"}]}]"#;
         let invalid_batch = r#"{"name": "busybox", "versions": [{"version": "1.29.3"}]}"#;
-        assert!(validate_batch(valid_batch).is_ok());
-        assert!(validate_batch(invalid_batch).is_err());
+        assert!(validate_packages_batch(valid_batch).is_ok());
+        assert!(validate_packages_batch(invalid_batch).is_err());
     }
 }

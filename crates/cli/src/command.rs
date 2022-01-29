@@ -15,9 +15,9 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
     match cmd {
         Command::Sync { cpe_feed } => sync::execute(cpe_feed.feed_dir).await,
         Command::Cpe {
-            cpe_batch,
+            packages_batch,
             cpe_feed,
-        } => cpe::execute(cpe_batch, cpe_feed.feed_dir).await,
+        } => cpe::execute(packages_batch, cpe_feed.feed_dir).await,
     }
 }
 
@@ -31,9 +31,9 @@ pub enum Command {
 
     #[structopt(name = "cpe", about = "Provides valid and existing CPEs")]
     Cpe {
+        packages_batch: String,
         #[structopt(flatten)]
         cpe_feed: CpeFeedOpt,
-        cpe_batch: String,
     },
     // todo: scan
 }
