@@ -164,10 +164,13 @@ dependencies = [
 name = "cli"
 version = "0.1.0"
 dependencies = [
+ "atty",
  "cpe-tag",
  "env_logger",
  "log",
+ "once_cell",
  "security-advisories",
+ "serde_json",
  "sha2",
  "structopt",
  "tokio",
@@ -1352,6 +1355,7 @@ dependencies = [
  "indicatif",
  "log",
  "reqwest",
+ "serde_json",
  "tokio",
 ]
 

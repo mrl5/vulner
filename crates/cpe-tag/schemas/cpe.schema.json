@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://localhost/schemas/cpe",
+  "title": "NVD CPE - structured naming scheme for information technology systems, software, and packages",
+  "type": "string",
+  "description": "https://csrc.nist.gov/schema/cpe/2.3/cpe-naming_2.3.xsd",
+  "pattern": "^cpe:2\\.3:.+:.+:.+:.+:.+:.+:.+:.+:.+$"
+}
