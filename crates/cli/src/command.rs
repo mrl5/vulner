@@ -9,6 +9,7 @@ use std::error::Error;
 use std::path::PathBuf;
 use structopt::StructOpt;
 mod cpe;
+mod cve;
 mod sync;
 
 pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
@@ -18,6 +19,7 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
             packages_batch,
             cpe_feed,
         } => cpe::execute(packages_batch, cpe_feed.feed_dir).await,
+        Command::Cve { cpe_batch } => cve::execute(cpe_batch).await,
     }
 }
 
@@ -35,6 +37,9 @@ pub enum Command {
         #[structopt(flatten)]
         cpe_feed: CpeFeedOpt,
     },
+
+    #[structopt(name = "cve", about = "Lists CVEs for given CPEs")]
+    Cve { cpe_batch: String },
     // todo: scan
 }
 

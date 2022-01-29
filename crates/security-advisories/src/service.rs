@@ -6,12 +6,18 @@
  */
 
 use reqwest::Client;
+use serde_json::Value;
 use std::error::Error;
 use std::path::Path;
 mod nvd;
 
 pub const CPE_MATCH_FEED: &str = nvd::CPE_MATCH_FEED;
 pub const CPE_MATCH_FEED_GZ: &str = nvd::CPE_MATCH_FEED_GZ;
+
+pub async fn fetch_cves_by_cpe(client: &Client, cpe: &str) -> Result<Value, Box<dyn Error>> {
+    log::info!("fetching CVEs by CPE ...");
+    nvd::fetch_cves_by_cpe(client, cpe).await
+}
 
 pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Error>> {
     log::info!("fetching CPE match feed checksum ...");

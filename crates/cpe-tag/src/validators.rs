@@ -6,15 +6,20 @@
  */
 
 use jsonschema::{Draft, JSONSchema};
-use serde_json::from_str;
+use serde_json::{from_str, Value};
 use std::error::Error;
 use std::io;
 
-pub fn validate_packages_batch(batch: &str) -> Result<(), Box<dyn Error>> {
-    let instance = from_str(batch)?;
-    let compiled = get_packages_batch_schema();
+pub fn validate_packages_batch(batch: &Value) -> Result<(), Box<dyn Error>> {
+    validate(batch, get_packages_batch_schema())
+}
 
-    let res = match compiled.validate(&instance) {
+pub fn validate_cpe_batch(batch: &Value) -> Result<(), Box<dyn Error>> {
+    validate(batch, get_cpe_batch_schema())
+}
+
+fn validate(instance: &Value, compiled: JSONSchema) -> Result<(), Box<dyn Error>> {
+    let res = match compiled.validate(instance) {
         Ok(_) => Ok(()),
         Err(errors) => {
             for error in errors {
@@ -53,14 +58,46 @@ fn get_packages_batch_schema() -> JSONSchema {
         .expect("valid schema")
 }
 
+fn get_cpe_batch_schema() -> JSONSchema {
+    let package_schema = from_str(include_str!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/schemas/cpe.schema.json"
+    )))
+    .unwrap();
+    let batch_schema: serde_json::Value = from_str(include_str!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/schemas/cpe-batch.schema.json"
+    )))
+    .unwrap();
+
+    JSONSchema::options()
+        .with_draft(Draft::Draft7)
+        .with_document("http://localhost/schemas/cpe".to_owned(), package_schema)
+        .with_meta_schemas()
+        .compile(&batch_schema)
+        .expect("valid schema")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
-    fn it_should_validate() {
-        let valid_batch = r#"[{"name": "busybox", "versions": [{"version": "1.29.3"}]}]"#;
-        let invalid_batch = r#"{"name": "busybox", "versions": [{"version": "1.29.3"}]}"#;
-        assert!(validate_packages_batch(valid_batch).is_ok());
-        assert!(validate_packages_batch(invalid_batch).is_err());
+    fn it_should_validate_packages_batch() {
+        let valid_batch =
+            from_str(r#"[{"name": "busybox", "versions": [{"version": "1.29.3"}]}]"#).unwrap();
+        let invalid_batch =
+            from_str(r#"{"name": "busybox", "versions": [{"version": "1.29.3"}]}"#).unwrap();
+        assert!(validate_packages_batch(&valid_batch).is_ok());
+        assert!(validate_packages_batch(&invalid_batch).is_err());
+    }
+
+    #[test]
+    fn it_should_validate_cpe_batch() {
+        let valid_batch =
+            from_str(r#"["cpe:2.3:a:busybox:busybox:1.29.3:*:*:*:*:*:*:*"]"#).unwrap();
+        let invalid_batch = from_str(r#"["cpe:/a:busybox:busybox:1.29.3 "]"#).unwrap();
+        assert!(validate_cpe_batch(&valid_batch).is_ok());
+        assert!(validate_cpe_batch(&invalid_batch).is_err());
     }
 }

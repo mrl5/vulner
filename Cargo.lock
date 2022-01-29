@@ -168,6 +168,7 @@ dependencies = [
  "env_logger",
  "log",
  "security-advisories",
+ "serde_json",
  "sha2",
  "structopt",
  "tokio",
@@ -1352,6 +1353,7 @@ dependencies = [
  "indicatif",
  "log",
  "reqwest",
+ "serde_json",
  "tokio",
 ]
 

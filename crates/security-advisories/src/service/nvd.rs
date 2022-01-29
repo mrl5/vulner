@@ -8,6 +8,7 @@
 use crate::utils::get_progress_bar;
 use futures_util::StreamExt;
 use reqwest::Client;
+use serde_json::Value;
 use std::cmp::min;
 use std::error::Error;
 use std::io;
@@ -17,11 +18,25 @@ use tokio::io::AsyncWriteExt;
 
 pub const CPE_MATCH_FEED: &str = "nvdcpematch-1.0.json";
 pub const CPE_MATCH_FEED_GZ: &str = "nvdcpematch-1.0.json.gz";
-const BASE_URL: &str = "https://nvd.nist.gov/feeds/json/cpematch/1.0";
-const CPE_MATCH_FEED_META: &str = "nvdcpematch-1.0.meta";
+const HOME_URL: &str = "https://nvd.nist.gov";
+const API_URL: &str = "https://services.nvd.nist.gov/rest/json";
+const CPE_FEED_PATH: &str = "feeds/json/cpematch/1.0";
+
+pub async fn fetch_cves_by_cpe(client: &Client, cpe: &str) -> Result<Value, Box<dyn Error>> {
+    let cve_query_path = "cves/1.0";
+    let cpe_query = "cpeMatchString";
+    let url = format!("{}/{}?{}={}", API_URL, cve_query_path, cpe_query, cpe);
+    let mut headers = reqwest::header::HeaderMap::new();
+    headers.insert(reqwest::header::ACCEPT, "application/json".parse()?);
+    let res = client.get(&url).headers(headers).send().await?;
+
+    let json: Value = res.json().await?;
+    Ok(json)
+}
 
 pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Error>> {
-    let url = format!("{}/{}", BASE_URL, CPE_MATCH_FEED_META);
+    let cpe_match_feed_meta = "nvdcpematch-1.0.meta";
+    let url = format!("{}/{}/{}", HOME_URL, CPE_FEED_PATH, cpe_match_feed_meta);
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(reqwest::header::ACCEPT, "text/plain".parse()?);
     let res = client.get(&url).headers(headers).send().await?;
@@ -34,7 +49,7 @@ pub async fn download_cpe_match_feed(
     client: &Client,
     feed_path: &Path,
 ) -> Result<(), Box<dyn Error>> {
-    let url = format!("{}/{}", BASE_URL, CPE_MATCH_FEED_GZ);
+    let url = format!("{}/{}/{}", HOME_URL, CPE_FEED_PATH, CPE_MATCH_FEED_GZ);
     let res = client.get(&url).send().await?;
     let total_size = res
         .content_length()
