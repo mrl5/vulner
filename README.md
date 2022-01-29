@@ -3,7 +3,8 @@
 
 Discover CVEs for packages installed by the portage.
 
-*Use case 1)* as a [Funtoo Linux] user I want to have awareness about CVEs on my system
+- **Use case 1)** as a [Funtoo Linux] user I want to have awareness about CVEs on my system
+- **Use case 2)** as user I want to list CVEs for given package
 
 **DISCLAIMER**
 
@@ -11,6 +12,11 @@ Running `vulner` doesn't guarantee that all CVEs present on your system will be
 detected. It tries to map packages installed by the portage (funtoo package
 manager) to a set of known NVD CPEs. It is possible that not all packages will
 be successfully tagged.
+
+
+## Examples
+
+Check out [COOKBOOK](COOKBOOK.md)
 
 
 ## CVEs, CPEs, WTFs
@@ -37,7 +43,10 @@ $ just init build install check-runtime-deps
 $ ./scripts/check-runtime-deps.sh
 $ vulner --help
 $ RUST_LOG=debug vulner sync
-$ vulner cpe '[{"name": "busybox", "versions": [{"version": "1.29.3"}, {"version": "1.31.0"}]}, {"name":"libxml2", "versions":[{"version":"2.9.10-r5"}]}]'
+$ vulner cpe \
+    '[{"name": "busybox", "versions": [{"version": "1.29.3"}, {"version": "1.31.0"}]}, {"name":"libxml2", "versions":[{"version":"2.9.10-r5"}]}]' |
+      vulner cve |
+        jq -c ".result.CVE_Items[] | {id: .cve.CVE_data_meta.ID, desc: .cve.description}"
 ```
 
 
