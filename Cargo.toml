@@ -2,5 +2,6 @@
 members = [
     "crates/cli",
     "crates/cpe-tag",
+    "crates/os-adapter",
     "crates/security-advisories",
 ]

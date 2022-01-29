@@ -1,22 +1,25 @@
 # vulner
 [![master status](https://github.com/mrl5/vulner/actions/workflows/rust-just.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/rust-just.yaml)
 
-Discover CVEs for packages installed by the portage.
+Discover CVEs for software.
 
 - **Use case 1)** as a [Funtoo Linux] user I want to have awareness about CVEs on my system
 - **Use case 2)** as user I want to list CVEs for given package
 
-**DISCLAIMER**
+## DISCLAIMER
 
-Running `vulner` doesn't guarantee that all CVEs present on your system will be
+Running `vulner scan` doesn't guarantee that all CVEs present on your system will be
 detected. It tries to map packages installed by the portage (funtoo package
 manager) to a set of known NVD CPEs. It is possible that not all packages will
 be successfully tagged.
 
+For more info about false negatives and false positives check
+[docs/CAVEATS.md](docs/CAVEATS.md)
+
 
 ## Examples
 
-Check out [COOKBOOK](COOKBOOK.md)
+Check out [docs/COOKBOOK.md](docs/COOKBOOK.md)
 
 
 ## CVEs, CPEs, WTFs
@@ -36,6 +39,9 @@ https://github.com/casey/just#packages)
 ```bash
 $ just init build install check-runtime-deps
 ```
+### Reminder
+be sure to either add `~/.cargo/bin` to your PATH to be able to run the installed
+binaries or to symlink `~/.cargo/bin/vulner` to some place covered by PATH
 
 
 ## Howto run
@@ -43,14 +49,11 @@ $ just init build install check-runtime-deps
 $ ./scripts/check-runtime-deps.sh
 $ vulner --help
 $ RUST_LOG=debug vulner sync
-$ vulner cpe \
-    '[{"name": "busybox", "versions": [{"version": "1.29.3"}, {"version": "1.31.0"}]}, {"name":"libxml2", "versions":[{"version":"2.9.10-r5"}]}]' |
-      vulner cve |
-        jq -c ".result.CVE_Items[] | {id: .cve.CVE_data_meta.ID, desc: .cve.description}"
+$ RUST_LOG=info vulner scan
 ```
 
 
-## Why `vulner` needs some python packages at runtime?
+## Why `vulner` needs python at runtime?
 
 Because of reasons described in
 [0001-runtime-python-dependencies.md](crates/cpe-tag/docs/adr/0001-runtime-python-dependencies.md)

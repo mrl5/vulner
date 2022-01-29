@@ -1,7 +1,47 @@
 # `vulner` cookbook
 
+```bash
+vulner --help
+```
+
 ## Content
+- [Scanning Funtoo Linux system for CVEs](#scanning-funtoo-linux-system-for-cves)
 - [Listing CVEs for given packages](#listing-cves-for-given-packages)
+
+
+## Scanning Funtoo Linux system for CVEs
+```bash
+export VULNER_FEED_DIR=$HOME/vulner/feeds/json
+export VULNER_OUT_DIR=$HOME/vulner/scan-results
+
+RUST_LOG=info vulner sync
+RUST_LOG=warn vulner scan
+```
+Results in:
+```bash
+$ tree ~/vulner/scan-results/
+```
+```
+└── 2022-01-30UTC
+    └── 11:10:06Z
+        ├── app-emulation
+        │   ├── cpe:2.3:a:linuxfoundation:containerd:1.5.5:*:*:*:*:*:*:*.txt
+        │   ├── cpe:2.3:a:linuxfoundation:runc:1.0.1:*:*:*:*:*:*:*.txt
+        │   └── cpe:2.3:a:qemu:qemu:5.2.0:-:*:*:*:*:*:*.txt
+        ├── dev-libs
+        │   ├── cpe:2.3:a:openssl:openssl:1.1.1l:*:*:*:*:*:*:*.txt
+        │   └── cpe:2.3:a:xmlsoft:libxml2:2.9.10:*:*:*:*:*:*:*.txt
+        └── x11-terms
+            └── cpe:2.3:a:twistedmatrix:twisted:18.7.0:*:*:*:*:*:*:*.txt
+```
+Report for particular package:
+```bash
+$ cat ~/vulner/scan-results/2022-01-30UTC/*/app-emulation/*containerd*.txt
+```
+```
+CVE-2021-43816
+CVE-2021-41103
+```
 
 
 ## Listing CVEs for given packages

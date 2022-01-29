@@ -15,13 +15,17 @@ pub const CPE_MATCH_FEED: &str = nvd::CPE_MATCH_FEED;
 pub const CPE_MATCH_FEED_GZ: &str = nvd::CPE_MATCH_FEED_GZ;
 
 pub async fn fetch_cves_by_cpe(client: &Client, cpe: &str) -> Result<Value, Box<dyn Error>> {
-    log::info!("fetching CVEs by CPE ...");
+    log::debug!("fetching CVEs by CPE ...");
     nvd::fetch_cves_by_cpe(client, cpe).await
 }
 
 pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Error>> {
     log::info!("fetching CPE match feed checksum ...");
     nvd::fetch_feed_checksum(client).await
+}
+
+pub fn get_cve_summary(full_cve_resp: &Value) -> Vec<String> {
+    nvd::get_cve_summary(full_cve_resp)
 }
 
 pub async fn download_cpe_match_feed(

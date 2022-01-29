@@ -34,6 +34,19 @@ pub async fn fetch_cves_by_cpe(client: &Client, cpe: &str) -> Result<Value, Box<
     Ok(json)
 }
 
+pub fn get_cve_summary(full_cve_resp: &Value) -> Vec<String> {
+    let mut ids = vec![];
+    if let Some(items) = full_cve_resp["result"]["CVE_Items"].as_array() {
+        for item in items {
+            if let Some(id) = item["cve"]["CVE_data_meta"]["ID"].as_str() {
+                ids.push(id.to_owned());
+            }
+        }
+    }
+
+    ids
+}
+
 pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Error>> {
     let cpe_match_feed_meta = "nvdcpematch-1.0.meta";
     let url = format!("{}/{}/{}", HOME_URL, CPE_FEED_PATH, cpe_match_feed_meta);
