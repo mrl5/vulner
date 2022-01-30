@@ -11,6 +11,7 @@ use std::path::PathBuf;
 use structopt::StructOpt;
 mod cpe;
 mod cve;
+mod scan;
 mod sync;
 
 pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
@@ -21,6 +22,7 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
             cpe_feed,
         } => cpe::execute(get_input(packages_batch)?, cpe_feed.feed_dir).await,
         Command::Cve { cpe_batch } => cve::execute(get_input(cpe_batch)?).await,
+        Command::Scan { cpe_feed, out_dir } => scan::execute(cpe_feed.feed_dir, out_dir).await,
     }
 }
 
@@ -41,7 +43,18 @@ pub enum Command {
 
     #[structopt(name = "cve", about = "Lists CVEs for given CPEs")]
     Cve { cpe_batch: Option<String> },
-    // todo: scan
+
+    #[structopt(
+        name = "scan",
+        about = "Scans for CVEs in software installed by the OS package manager"
+    )]
+    Scan {
+        #[structopt(flatten)]
+        cpe_feed: CpeFeedOpt,
+
+        #[structopt(short = "o", long = "out-dir", env = "VULNER_OUT_DIR")]
+        out_dir: PathBuf,
+    },
 }
 
 #[derive(Debug, StructOpt)]

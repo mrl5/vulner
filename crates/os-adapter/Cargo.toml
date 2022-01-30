@@ -1,0 +1,12 @@
+[package]
+name = "os-adapter"
+version = "0.1.0"
+authors = ["mrl5"]
+edition = "2021"
+description = "Adapter for OSes supported by vulner"
+license = "MPL-2.0"
+keywords = ["os", "adapter"]
+
+[dependencies]
+cpe-tag = { path = "../cpe-tag" }
+log = "0.4.14"

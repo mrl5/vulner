@@ -5,22 +5,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use crate::package::Package;
 use jsonschema::{Draft, JSONSchema};
-use serde::{Deserialize, Serialize};
 use serde_json::{from_str, from_value, Value};
 use std::error::Error;
 use std::io;
-
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-pub struct Package {
-    name: String,
-    versions: Vec<Version>,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-pub struct Version {
-    version: String,
-}
 
 pub fn into_validated_packages(batch: &Value) -> Result<Vec<Package>, Box<dyn Error>> {
     validate(batch, get_packages_batch_schema())?;

@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-use crate::validators::Package;
+use crate::package::Package;
 use pyo3::prelude::*;
 use pythonize::pythonize;
 use std::error::Error;

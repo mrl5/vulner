@@ -20,6 +20,7 @@ pub async fn execute(batch: String) -> Result<(), Box<dyn Error>> {
     for v in json.as_array().unwrap_or(&vec![]) {
         match v.as_str() {
             Some(cpe) => {
+                log::info!("fetching CVEs by CPE {} ...", cpe);
                 let res = fetch_cves_by_cpe(&client, cpe).await?;
                 println!("{}", res);
             }
