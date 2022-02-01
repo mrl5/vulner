@@ -5,13 +5,13 @@ Discover CVEs for software.
 
 - **Use case 1)** as a [Funtoo Linux] user I want to have awareness about CVEs on my system
 - **Use case 2)** as user I want to list CVEs for given package
+- **Use case 3)** as a [Gentoo Linux] user I want to have awareness about CVEs on my system
 
 ## DISCLAIMER
 
 Running `vulner scan` doesn't guarantee that all CVEs present on your system will be
-detected. It tries to map packages installed by the portage (funtoo package
-manager) to a set of known NVD CPEs. It is possible that not all packages will
-be successfully tagged.
+detected. It tries to map packages installed by the [portage] to a set of known
+NVD CPEs. It is possible that not all packages will be successfully tagged.
 
 For more info about false negatives and false positives check
 [docs/CAVEATS.md](docs/CAVEATS.md)
@@ -61,5 +61,7 @@ ADR.
 
 
 [Funtoo Linux]: https://www.funtoo.org/
+[Gentoo Linux]: https://www.gentoo.org/
 [CVE]: https://nvd.nist.gov/vuln
 [CPE]: https://nvd.nist.gov/products/cpe
+[portage]: https://en.wikipedia.org/wiki/Portage_(software)

@@ -8,12 +8,12 @@
 use super::portage::Portage;
 use std::path::Path;
 
-pub struct Funtoo {
+pub struct Gentoo {
     os: super::Os,
     flavor: super::LinuxDistro,
 }
 
-impl Funtoo {
+impl Gentoo {
     pub fn new() -> Self {
         Self {
             os: super::Os::GnuLinux,
@@ -22,9 +22,9 @@ impl Funtoo {
     }
 }
 
-impl super::OsAdapter for Funtoo {}
+impl super::OsAdapter for Gentoo {}
 
-impl super::OsInfo for Funtoo {
+impl super::OsInfo for Gentoo {
     fn get_os(&self) -> &super::Os {
         &self.os
     }
@@ -34,7 +34,7 @@ impl super::OsInfo for Funtoo {
     }
 }
 
-impl Portage for Funtoo {
+impl Portage for Gentoo {
     fn get_pkg_dir(&self) -> &Path {
         Path::new("/var/db/pkg/")
     }
