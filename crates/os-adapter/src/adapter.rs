@@ -14,12 +14,19 @@ use std::io;
 use std::str::FromStr;
 use std::vec::Vec;
 mod linux_funtoo;
+mod linux_gentoo;
+mod portage;
 
-pub trait OsAdapter {
+pub trait OsInfo {
     fn get_os(&self) -> &Os;
     fn get_os_flavor(&self) -> Option<OsFlavor>;
+}
+
+pub trait OsPackages {
     fn get_all_catpkgs(&self) -> Result<HashMap<String, Vec<Package>>, Box<dyn Error>>;
 }
+
+pub trait OsAdapter: OsInfo + OsPackages {}
 
 pub fn get_adapter() -> Result<Box<dyn OsAdapter>, Box<dyn Error>> {
     let os = Os::from_str(env::consts::OS)?;
@@ -46,12 +53,16 @@ pub enum OsFlavor<'a> {
 #[derive(Debug, PartialEq)]
 pub enum LinuxDistro {
     Funtoo,
+    Gentoo,
 }
 
 pub fn get_supported_map() -> HashMap<Os, Vec<OsFlavor<'static>>> {
     HashMap::from([(
         Os::GnuLinux,
-        vec![OsFlavor::LinuxDistro(&LinuxDistro::Funtoo)],
+        vec![
+            OsFlavor::LinuxDistro(&LinuxDistro::Funtoo),
+            OsFlavor::LinuxDistro(&LinuxDistro::Gentoo),
+        ],
     )])
 }
 
@@ -59,6 +70,7 @@ fn get_linux_adapter(id: LinuxDistro) -> Box<dyn OsAdapter> {
     // https://refactoring.guru/design-patterns/factory-method
     match id {
         LinuxDistro::Funtoo => Box::new(linux_funtoo::Funtoo::new()),
+        LinuxDistro::Gentoo => Box::new(linux_gentoo::Gentoo::new()),
     }
 }
 
@@ -89,6 +101,7 @@ impl FromStr for LinuxDistro {
         // ID of https://www.freedesktop.org/software/systemd/man/os-release.html
         match input {
             "funtoo" => Ok(LinuxDistro::Funtoo),
+            "gentoo" => Ok(LinuxDistro::Gentoo),
             _ => Err(io::Error::new(err_kind, err_msg)),
         }
     }
@@ -107,6 +120,7 @@ mod tests {
     #[test]
     fn it_should_know_supported_distros() {
         assert!(LinuxDistro::from_str("funtoo").is_ok());
+        assert!(LinuxDistro::from_str("gentoo").is_ok());
         assert!(LinuxDistro::from_str("debian").is_err());
     }
 }
