@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use crate::cve_summary::CveSummary;
 use reqwest::Client;
 use serde_json::Value;
 use std::error::Error;
@@ -24,8 +25,8 @@ pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Erro
     nvd::fetch_feed_checksum(client).await
 }
 
-pub fn get_cve_summary(full_cve_resp: &Value) -> Vec<String> {
-    nvd::get_cve_summary(full_cve_resp)
+pub fn get_cves_summary(full_cve_resp: &Value) -> Vec<CveSummary> {
+    nvd::get_cves_summary(full_cve_resp)
 }
 
 pub async fn download_cpe_match_feed(
