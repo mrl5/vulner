@@ -17,7 +17,7 @@ impl Gentoo {
     pub fn new() -> Self {
         Self {
             os: super::Os::GnuLinux,
-            flavor: super::LinuxDistro::Funtoo,
+            flavor: super::LinuxDistro::Gentoo,
         }
     }
 }
