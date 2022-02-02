@@ -36,11 +36,22 @@ $ tree ~/vulner/scan-results/
 ```
 Report for particular package:
 ```bash
-$ cat ~/vulner/scan-results/2022-01-30UTC/*/app-emulation/*containerd*.txt
+$ cat ~/vulner/scan-results/2022-01-30UTC/*/app-emulation/*containerd*.txt | jq '.'
 ```
 ```
-CVE-2021-43816
-CVE-2021-41103
+{
+  "id": "CVE-2021-41103",
+  "description": "A bug was found in containerd where container root directories and some plugins had insufficiently restricted permissions, allowing otherwise unprivileged Linux users to traverse directory contents and execute programs.",
+,
+  "urls": [
+    "https://nvd.nist.gov/vuln/detail/CVE-2021-41103",
+    "https://github.com/containerd/containerd/commit/5b46e404f6b9f661a205e28d59c982d3634148f8",
+    "https://github.com/containerd/containerd/security/advisories/GHSA-c2h3-6mxw-7mvq",
+    "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ZNFADTCHHYWVM6W4NJ6CB4FNFM2VMBIB/",
+    "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/B5Q6G6I4W5COQE25QMC7FJY3I3PAYFBB/",
+    "https://www.debian.org/security/2021/dsa-5002"
+  ]
+}
 ```
 
 

@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use crate::cve_summary::CveSummary;
 use crate::utils::get_progress_bar;
 use futures_util::StreamExt;
 use reqwest::Client;
@@ -34,12 +35,13 @@ pub async fn fetch_cves_by_cpe(client: &Client, cpe: &str) -> Result<Value, Box<
     Ok(json)
 }
 
-pub fn get_cve_summary(full_cve_resp: &Value) -> Vec<String> {
+pub fn get_cves_summary(full_cve_resp: &Value) -> Vec<CveSummary> {
     let mut ids = vec![];
     if let Some(items) = full_cve_resp["result"]["CVE_Items"].as_array() {
         for item in items {
-            if let Some(id) = item["cve"]["CVE_data_meta"]["ID"].as_str() {
-                ids.push(id.to_owned());
+            let cve_data = &item["cve"];
+            if let Some(summary) = get_cve_summary(cve_data) {
+                ids.push(summary);
             }
         }
     }
@@ -105,6 +107,41 @@ fn get_checksum(meta: String) -> Result<String, io::Error> {
         Some(l) => Ok(l.to_ascii_lowercase()),
         None => Err(io::Error::new(err_kind, err_msg)),
     }
+}
+
+fn get_cve_summary(cve_data: &Value) -> Option<CveSummary> {
+    if let Some(id) = cve_data["CVE_data_meta"]["ID"].as_str() {
+        return Some(CveSummary::new(
+            id.to_owned(),
+            get_cve_desc(cve_data),
+            get_cve_urls(id, cve_data),
+        ));
+    }
+    None
+}
+
+fn get_cve_desc(cve_data: &Value) -> String {
+    if let Some(descriptions) = cve_data["description"]["description_data"].as_array() {
+        if let Some(desc) = descriptions.iter().find(|x| x["lang"] == "en") {
+            if let Some(value) = desc["value"].as_str() {
+                return value.to_owned();
+            }
+        }
+    }
+    "".to_owned()
+}
+
+fn get_cve_urls(id: &str, cve_data: &Value) -> Vec<String> {
+    let nvd_url = "https://nvd.nist.gov/vuln/detail";
+    let mut urls = vec![format!("{}/{}", nvd_url, id)];
+
+    if let Some(ref_data) = cve_data["references"]["reference_data"].as_array() {
+        for url in ref_data.iter().map(|x| x["url"].as_str()).flatten() {
+            urls.push(url.to_owned());
+        }
+    }
+
+    urls
 }
 
 #[cfg(test)]

@@ -49,7 +49,7 @@ binaries or to symlink `~/.cargo/bin/vulner` to some place covered by PATH
 $ ./scripts/check-runtime-deps.sh
 $ vulner --help
 $ RUST_LOG=debug vulner sync
-$ RUST_LOG=info vulner scan
+$ RUST_LOG=info vulner scan -o ~/vulner/scan-results
 ```
 
 

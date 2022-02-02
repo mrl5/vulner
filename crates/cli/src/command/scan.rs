@@ -10,8 +10,9 @@ use cpe_tag::package::Package;
 use cpe_tag::query_builder::{get_grep_patterns, query};
 use os_adapter::adapter::get_adapter;
 use reqwest::Client;
+use security_advisories::cve_summary::CveSummary;
 use security_advisories::http::get_client;
-use security_advisories::service::{fetch_cves_by_cpe, get_cve_summary, CPE_MATCH_FEED};
+use security_advisories::service::{fetch_cves_by_cpe, get_cves_summary, CPE_MATCH_FEED};
 use std::error::Error;
 use std::fs::create_dir_all;
 use std::fs::File;
@@ -81,7 +82,7 @@ async fn handle_cves(
     let mut already_notified = false;
     for cpe in matches {
         let cves = fetch_cves_by_cpe(client, cpe).await?;
-        let cves = get_cve_summary(&cves);
+        let cves = get_cves_summary(&cves);
 
         if cves.is_empty() {
             continue;
@@ -97,13 +98,13 @@ async fn handle_cves(
     Ok(())
 }
 
-fn write_report(cwd: &Path, cpe: &str, cves: &[String]) -> Result<(), Box<dyn Error>> {
+fn write_report(cwd: &Path, cpe: &str, cves: &[CveSummary]) -> Result<(), Box<dyn Error>> {
     log::info!("saving report in {:?} ...", cwd.as_os_str());
     create_dir_all(cwd)?;
     let mut f = File::create(cwd.join(format!("{}.txt", cpe)))?;
 
     for cve in cves {
-        log::debug!("{}", cve);
+        log::debug!("{}", cve.id);
         writeln!(f, "{}", cve)?;
     }
     Ok(())
