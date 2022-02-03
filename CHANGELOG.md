@@ -1,3 +1,21 @@
+# [0.2.0](https://github.com/mrl5/vulner/compare/v0.1.0...v0.2.0) (2022-02-14)
+
+
+### Bug Fixes
+
+* **cli:** dont stop but log on http error ([b9494f5](https://github.com/mrl5/vulner/commit/b9494f506163997d719139ec03e887350f2f3f0c))
+* **cpe-tag:** more verbose error when cpe match feed not found ([52f4061](https://github.com/mrl5/vulner/commit/52f4061d2e16dc2ea03db40905ce6e060876af5b))
+* **os-adapter:** gentoo flavor is gentoo ([0e42c43](https://github.com/mrl5/vulner/commit/0e42c439e632a44ba6c326538159a8ae1254a7ad))
+
+
+### Features
+
+* **cli:** richer scan reports ([23799cc](https://github.com/mrl5/vulner/commit/23799ccad50e578abbe7cf2850c756a3c913b857))
+* **cli:** summary flag for cve command ([890f588](https://github.com/mrl5/vulner/commit/890f5887aec4290224347a3a2f7d6f9025630a91))
+* **os-adapter:** support gentoo linux ([3fcfce8](https://github.com/mrl5/vulner/commit/3fcfce81f89f52e5cd415917aa1fb42bc953788e))
+
+
+
 # 0.1.0 (2022-01-30)
 
 
