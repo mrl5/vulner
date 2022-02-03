@@ -7,11 +7,12 @@
 
 use cpe_tag::validators::validate_cpe_batch;
 use security_advisories::http::get_client;
-use security_advisories::service::fetch_cves_by_cpe;
+use security_advisories::service::{fetch_cves_by_cpe, get_cves_summary};
 use serde_json::from_str;
+use serde_json::Value;
 use std::error::Error;
 
-pub async fn execute(batch: String) -> Result<(), Box<dyn Error>> {
+pub async fn execute(batch: String, show_summary: bool) -> Result<(), Box<dyn Error>> {
     log::info!("validating input ...");
     let json = from_str(&batch)?;
     validate_cpe_batch(&json)?;
@@ -21,12 +22,22 @@ pub async fn execute(batch: String) -> Result<(), Box<dyn Error>> {
         match v.as_str() {
             Some(cpe) => {
                 log::info!("fetching CVEs by CPE {} ...", cpe);
-                let res = fetch_cves_by_cpe(&client, cpe).await?;
-                println!("{}", res);
+                let cves = fetch_cves_by_cpe(&client, cpe).await?;
+                print_cves(cves, show_summary);
             }
             None => continue,
         }
     }
 
     Ok(())
+}
+
+fn print_cves(cves: Value, show_summary: bool) {
+    if show_summary {
+        for cve in get_cves_summary(&cves) {
+            println!("{}", cve);
+        }
+    } else {
+        println!("{}", cves);
+    }
 }

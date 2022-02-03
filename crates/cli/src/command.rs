@@ -21,7 +21,7 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
             packages_batch,
             cpe_feed,
         } => cpe::execute(get_input(packages_batch)?, cpe_feed.feed_dir).await,
-        Command::Cve { cpe_batch } => cve::execute(get_input(cpe_batch)?).await,
+        Command::Cve { cpe_batch, summary } => cve::execute(get_input(cpe_batch)?, summary).await,
         Command::Scan { cpe_feed, out_dir } => scan::execute(cpe_feed.feed_dir, out_dir).await,
     }
 }
@@ -42,7 +42,11 @@ pub enum Command {
     },
 
     #[structopt(name = "cve", about = "Lists CVEs for given CPEs")]
-    Cve { cpe_batch: Option<String> },
+    Cve {
+        cpe_batch: Option<String>,
+        #[structopt(short, long, help = "Prints CVE summary instead of full response")]
+        summary: bool,
+    },
 
     #[structopt(
         name = "scan",
