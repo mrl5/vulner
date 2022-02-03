@@ -82,12 +82,7 @@ RUST_LOG=debug vulner sync && echo '
     ]
   }
 ]
-' | jq -c '.' | vulner cpe | vulner cve | jq -c ".result.CVE_Items[] | \
-    {
-      id: .cve.CVE_data_meta.ID,
-      desc: .cve.description,
-      impact: .impact.baseMetricV2
-    }"
+' | jq -c '.' | vulner cpe | vulner cve --summary
 ```
 example produces:
 ```
