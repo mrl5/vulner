@@ -21,6 +21,10 @@ pub fn get_grep_patterns(packages: &[Package]) -> Result<String, Box<dyn Error>>
 pub fn query(pattern: String, feed: &Path) -> Result<Vec<String>, Box<dyn Error>> {
     let matcher = RegexMatcher::new_line_matcher(&pattern)?;
     let mut matches: Vec<String> = vec![];
+    if !feed.exists() {
+        log::error!("{:?} doesn't exist", feed.as_os_str());
+    }
+
     Searcher::new().search_path(
         &matcher,
         feed,
