@@ -81,8 +81,13 @@ async fn handle_cves(
 ) -> Result<(), Box<dyn Error>> {
     let mut already_notified = false;
     for cpe in matches {
-        let cves = fetch_cves_by_cpe(client, cpe).await?;
-        let cves = get_cves_summary(&cves);
+        let cves = match fetch_cves_by_cpe(client, cpe).await {
+            Ok(res) => get_cves_summary(&res),
+            Err(e) => {
+                log::error!("{}", e);
+                vec![]
+            }
+        };
 
         if cves.is_empty() {
             continue;
