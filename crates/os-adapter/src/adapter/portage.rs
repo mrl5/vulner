@@ -38,7 +38,7 @@ where
             match category.file_name().into_string() {
                 Ok(ctgr) => {
                     if skipped_dirs.contains(&ctgr.as_str()) {
-                        log::warn!("SKIPPING packages in {} ...", ctgr);
+                        log::debug!("SKIPPING packages in {} ...", ctgr);
                         continue;
                     }
 

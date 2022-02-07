@@ -40,7 +40,7 @@ pub async fn execute(feed_dir: PathBuf, out_dir: PathBuf) -> Result<(), Box<dyn 
     let catpkgs = os.get_all_catpkgs()?;
     for (ctg, pkgs) in catpkgs {
         let cwd = out_dir.join(&ctg);
-        log::info!("processing {} ...", ctg);
+        log::debug!("processing {} ...", ctg);
         handle_pkgs(&client, &feed, &cwd, &ctg, &pkgs).await?;
     }
 
@@ -59,7 +59,7 @@ async fn handle_pkgs(
     let matches = query(pattern, feed)?;
 
     if matches.is_empty() {
-        log::warn!(
+        log::info!(
             "no CPE matches in {}. This *MIGHT* indicate false negatives ...",
             category
         );
