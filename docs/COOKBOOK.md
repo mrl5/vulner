@@ -56,6 +56,14 @@ $ cat ~/vulner/scan-results/2022-01-30UTC/*/app-emulation/*containerd*.txt | jq 
 
 
 ## Listing CVEs for given packages
+
+### Example 1
+```bash
+vulner sync
+vulner cpe '[{"name":"lua", "versions":[{"version":"5.3.5-r1"}]}]' | vulner cve --summary
+```
+
+### Example 2
 **NOTE** this example requires third party package to be present on your OS -
 [jq](https://stedolan.github.io/jq/) (for pretty output)
 
