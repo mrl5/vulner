@@ -19,10 +19,14 @@ use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-pub async fn execute(feed_dir: PathBuf, out_dir: PathBuf) -> Result<(), Box<dyn Error>> {
+pub async fn execute(
+    feed_dir: PathBuf,
+    out_dir: PathBuf,
+    pkg_dir: Option<PathBuf>,
+) -> Result<(), Box<dyn Error>> {
     // todo: progress bar
     log::debug!("getting os adapter ...");
-    let os = get_adapter()?;
+    let os = get_adapter(pkg_dir)?;
 
     let now = Utc::now();
     let [date, time] = [

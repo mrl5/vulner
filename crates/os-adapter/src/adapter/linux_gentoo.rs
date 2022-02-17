@@ -6,11 +6,12 @@
  */
 
 use super::portage::Portage;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub struct Gentoo {
     os: super::Os,
     flavor: super::LinuxDistro,
+    pkg_dir: PathBuf,
 }
 
 impl Gentoo {
@@ -18,6 +19,7 @@ impl Gentoo {
         Self {
             os: super::Os::GnuLinux,
             flavor: super::LinuxDistro::Gentoo,
+            pkg_dir: Path::new("/var/db/pkg/").to_path_buf(),
         }
     }
 }
@@ -36,6 +38,10 @@ impl super::OsInfo for Gentoo {
 
 impl Portage for Gentoo {
     fn get_pkg_dir(&self) -> &Path {
-        Path::new("/var/db/pkg/")
+        &self.pkg_dir
+    }
+
+    fn set_pkg_dir(&mut self, pkg_dir: PathBuf) {
+        self.pkg_dir = pkg_dir;
     }
 }
