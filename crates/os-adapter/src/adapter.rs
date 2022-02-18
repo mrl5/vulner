@@ -11,6 +11,7 @@ use std::collections::HashMap;
 use std::env;
 use std::error::Error;
 use std::io;
+use std::path::PathBuf;
 use std::str::FromStr;
 use std::vec::Vec;
 mod linux_funtoo;
@@ -24,16 +25,22 @@ pub trait OsInfo {
 
 pub trait OsPackages {
     fn get_all_catpkgs(&self) -> Result<HashMap<String, Vec<Package>>, Box<dyn Error>>;
+    fn set_pkg_dir(&mut self, pkg_dir: PathBuf);
 }
 
 pub trait OsAdapter: OsInfo + OsPackages {}
 
-pub fn get_adapter() -> Result<Box<dyn OsAdapter>, Box<dyn Error>> {
+pub fn get_adapter(pkg_dir: Option<PathBuf>) -> Result<Box<dyn OsAdapter>, Box<dyn Error>> {
     let os = Os::from_str(env::consts::OS)?;
 
     if os == Os::GnuLinux {
         let id = LinuxDistro::from_str(&get_distro_id()?)?;
-        Ok(get_linux_adapter(id))
+        let mut adapter = get_linux_adapter(id);
+
+        if let Some(pkg_dir) = pkg_dir {
+            adapter.set_pkg_dir(pkg_dir);
+        }
+        Ok(adapter)
     } else {
         // placeholder
         Err(Box::new(io::Error::from(io::ErrorKind::Unsupported)))

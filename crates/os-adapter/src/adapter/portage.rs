@@ -9,24 +9,34 @@ use cpe_tag::package::{convert_to_pkg, Package};
 use std::collections::HashMap;
 use std::error::Error;
 use std::fs::read_dir;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub trait Portage {
     fn get_pkg_dir(&self) -> &Path;
+    fn set_pkg_dir(&mut self, pkg_dir: PathBuf);
 }
 
+// https://riptutorial.com/rust/example/22917/inheritance-with-traits
 impl<T> super::OsPackages for T
 where
     T: Portage,
 {
-    // https://riptutorial.com/rust/example/22917/inheritance-with-traits
+    fn set_pkg_dir(&mut self, pkg_dir: PathBuf) {
+        self.set_pkg_dir(pkg_dir)
+    }
+
     fn get_all_catpkgs(&self) -> Result<HashMap<String, Vec<Package>>, Box<dyn Error>> {
         let pkg_prefix_adapter: HashMap<&str, String> =
             HashMap::from([("dev-libs", "lib".to_owned())]);
         let skipped_dirs = vec!["virtual"];
         let mut all_catpkgs = HashMap::new();
 
-        log::info!("walking {:?} ...", &self.get_pkg_dir().as_os_str());
+        if !&self.get_pkg_dir().exists() {
+            log::error!("{:?} doesn't exist", &self.get_pkg_dir().as_os_str());
+        } else {
+            log::info!("walking {:?} ...", &self.get_pkg_dir().as_os_str());
+        }
+
         for category in read_dir(&self.get_pkg_dir())? {
             let category = category?;
             let path = &category.path();
