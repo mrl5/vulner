@@ -29,7 +29,12 @@ init-dev: init
 dev-init: init-dev
 .PHONY: dev-init
 
-lint: fmt check-license-headers clippy
+lint: fmt check-license-headers
+	cargo clippy --fix --allow-staged
+.PHONY: lint
+
+lint-ci: fmt check-license-headers
+	cargo clippy
 .PHONY: lint
 
 test:
@@ -40,10 +45,6 @@ fmt:
 	rustfmt crates/**/src/*.rs
 	rustfmt crates/**/src/**/*.rs
 .PHONY: fmt
-
-clippy:
-	cargo clippy
-.PHONY: clippy
 
 check-license-headers:
 	./scripts/check-license-header-all-files.sh

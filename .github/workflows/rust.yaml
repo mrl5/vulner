@@ -19,11 +19,11 @@ jobs:
       with:
         submodules: true
 
-    - name: Lint
-      run: make lint
-
     - name: Build
       run: cargo build --verbose
+
+    - name: Lint
+      run: make lint-ci
 
     - name: Run tests
       run: make test
