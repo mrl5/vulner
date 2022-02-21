@@ -7,6 +7,9 @@ description = "Adapter for OSes supported by vulner"
 license = "MPL-2.0"
 keywords = ["os", "adapter"]
 
+[package.metadata.workspaces]
+independent = true
+
 [dependencies]
 cpe-tag = { path = "../cpe-tag" }
 log = "0.4.14"
