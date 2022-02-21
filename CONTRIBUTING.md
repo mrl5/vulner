@@ -43,15 +43,9 @@ If you need more examples check commits on master branch.
 
 ## DEV CLI
 ```bash
-just init-dev
-just lint
-just test
+make init-dev
+make lint test
 ```
-if you don't have `just` yet then here is how to install
-https://github.com/casey/just#packages
-
-In case you're curious why `just` then check
-https://vino.dev/blog/node-to-rust-day-2-cargo/
 
 
 

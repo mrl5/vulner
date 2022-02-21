@@ -1,5 +1,5 @@
 # vulner
-[![master status](https://github.com/mrl5/vulner/actions/workflows/rust-just.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/rust-just.yaml)
+[![master status](https://github.com/mrl5/vulner/actions/workflows/rust.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/rust.yaml)
 
 Discover CVEs for software.
 
@@ -34,10 +34,9 @@ to have reliable vulnerability tracker.
 $ git submodule update --init
 $ cargo build --release && cargo install --path crates/cli/
 ```
-or you can use `just` - fancy `make` replacement (check out
-https://github.com/casey/just#packages)
+or you can use `make`
 ```bash
-$ just init build install check-runtime-deps
+$ make install
 ```
 ### Reminder
 be sure to either add `~/.cargo/bin` to your PATH to be able to run the installed
