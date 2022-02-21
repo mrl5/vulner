@@ -10,11 +10,12 @@ main () {
 }
 
 check_os_deps () {
-    /bin/gunzip --version > /dev/null
+    command -v /bin/gunzip > /dev/null
 }
 
 check_python_deps () {
-    python3 -c ''
+    # https://unix.stackexchange.com/a/340695
+    command -v python3-config > /dev/null
 }
 
 main "$@"
