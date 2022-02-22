@@ -22,7 +22,6 @@ init:
 .PHONY: init
 
 init-dev: init
-	npm install
 	git config --local core.hooksPath .githooks || echo 'Could not set git hooks'
 .PHONY: init-dev
 
@@ -53,3 +52,7 @@ check-license-headers:
 check-runtime-deps:
 	./scripts/check-runtime-deps.sh
 .PHONY: check-runtime-deps
+
+release:
+	./scripts/release.sh
+.PHONY: release

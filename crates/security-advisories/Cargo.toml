@@ -7,6 +7,9 @@ description = "Interacts with security advisory services"
 license = "MPL-2.0"
 keywords = ["cpe", "cve", "cna", "security", "advisory"]
 
+[package.metadata.workspaces]
+independent = true
+
 [dependencies]
 futures-core = "0.3.19"
 futures-util = "0.3.19"

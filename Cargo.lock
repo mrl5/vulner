@@ -175,7 +175,7 @@ dependencies = [
 
 [[package]]
 name = "cli"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "atty",
  "chrono",
@@ -1093,7 +1093,7 @@ dependencies = [
 
 [[package]]
 name = "os-adapter"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "cpe-tag",
  "log",
