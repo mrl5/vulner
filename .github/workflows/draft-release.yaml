@@ -1,6 +1,6 @@
 # https://github.com/actions/create-release
 # https://github.com/actions/upload-release-asset
-name: pre-release
+name: draft-release
 
 on:
   push:
