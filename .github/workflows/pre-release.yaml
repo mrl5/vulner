@@ -22,7 +22,7 @@ jobs:
           mkdir artifacts
           zip --exclude "*metarepo-cpe-tag*" \
             --recurse-paths \
-            artifacts/full-source-${{ github.ref }}.zip \
+            artifacts/full-source.zip \
             crates/ Cargo.* Makefile scripts/ README.md LICENSE
 
       - name: Build from artifact
@@ -51,6 +51,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/full-source-${{ github.ref }}.zip
-          asset_name: full-source-${{ github.ref }}.zip
+          asset_path: ./artifacts/full-source.zip
+          asset_name: full-source.zip
           asset_content_type: application/zip
