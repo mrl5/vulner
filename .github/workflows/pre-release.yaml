@@ -1,9 +1,13 @@
+# https://github.com/actions/create-release
+# https://github.com/actions/upload-release-asset
 name: pre-release
 
 on:
   push:
     tags:
       - 'v*'
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   build:
@@ -13,7 +17,21 @@ jobs:
         with:
           submodules: true
 
-      - name: create prerelease
+      - name: Create artifact
+        run: |
+          mkdir artifacts
+          zip --exclude "*metarepo-cpe-tag*" \
+            --recurse-paths \
+            artifacts/full-source-${{ github.ref }}.zip \
+            crates/ Cargo.* Makefile scripts/ README.md LICENSE
+
+      - name: Build from artifact
+        run: |
+          unzip artifacts/full-source.zip -d build
+          cd build/
+          make build
+
+      - name: Create draft
         id: create_prerelease
         uses: actions/create-release@v1
         env:
@@ -23,5 +41,16 @@ jobs:
           release_name: ${{ github.ref }}
           body: |
             DRAFT
-          draft: false
+          draft: true
           prerelease: true
+
+    - name: Upload release asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/full-source-${{ github.ref }}.zip
+          asset_name: full-source-${{ github.ref }}.zip
+          asset_content_type: application/zip

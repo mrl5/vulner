@@ -2,6 +2,10 @@
 *.rs.bk
 node_modules
 
+# github CI
+artifacts
+build
+
 # vim
 *.swp
 tags

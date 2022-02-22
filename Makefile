@@ -18,7 +18,7 @@ clean:
 .PHONY: clean
 
 init:
-	git submodule update --init
+	git submodule update --init || echo 'Could not init git submodules'
 .PHONY: init
 
 init-dev: init
