@@ -47,6 +47,8 @@ get_recommended_bump() {
 bump_version() {
     local recommended_bump=$(get_recommended_bump)
     cargo workspaces version \
+        --all \
+        --force cli \
         --include-merged-tags \
         --no-git-commit $recommended_bump
     git add -u crates/ Cargo.lock
