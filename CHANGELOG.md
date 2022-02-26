@@ -1,3 +1,12 @@
+## [0.3.1](https://github.com/mrl5/vulner/compare/v0.3.0...v0.3.1) (2022-02-26)
+
+
+### Bug Fixes
+
+* adapter for apache http server ([e28c04a](https://github.com/mrl5/vulner/commit/e28c04ac1b08ccd6e2c89e692e421ba97dcaa970))
+
+
+
 # [0.3.0](https://github.com/mrl5/vulner/compare/v0.2.0...v0.3.0) (2022-02-22)
 
 

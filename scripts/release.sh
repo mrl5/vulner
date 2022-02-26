@@ -18,7 +18,7 @@ main() {
     yarn install --frozen-lockfile
     git checkout -b $(uuidgen --random)
     bump_version
-    git_push $remote
+    git_prep_push $remote
 }
 
 cleanup() {
@@ -49,15 +49,17 @@ bump_version() {
     cargo workspaces version \
         --include-merged-tags \
         --no-git-commit $recommended_bump
+    git add -u crates/ Cargo.lock
     yarn version --$recommended_bump
 }
 
-git_push() {
+git_prep_push() {
     local remote="$1"
     local tag=v$(get_current_version)
     local branch=release-$tag
     git branch -m $branch
-    git push $remote $branch $tag
+    echo "remeber to:
+    git push $remote $branch $tag"
 }
 
 get_current_version() {
