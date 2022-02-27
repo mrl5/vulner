@@ -10,6 +10,7 @@ use reqwest::Client;
 use serde_json::Value;
 use std::error::Error;
 use std::path::Path;
+mod cisa;
 mod nvd;
 
 pub const CPE_MATCH_FEED: &str = nvd::CPE_MATCH_FEED;
@@ -35,4 +36,9 @@ pub async fn download_cpe_match_feed(
 ) -> Result<(), Box<dyn Error>> {
     log::info!("downloading CPE match feed ...");
     nvd::download_cpe_match_feed(client, feed_path).await
+}
+
+pub async fn fetch_known_exploited_vulns(client: &Client) -> Result<Value, Box<dyn Error>> {
+    log::info!("fetching known exploited vulnerabilities ...");
+    cisa::fetch_known_exploited_vulns(client).await
 }

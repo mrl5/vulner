@@ -136,7 +136,7 @@ fn get_cve_urls(id: &str, cve_data: &Value) -> Vec<String> {
     let mut urls = vec![format!("{}/{}", nvd_url, id)];
 
     if let Some(ref_data) = cve_data["references"]["reference_data"].as_array() {
-        for url in ref_data.iter().map(|x| x["url"].as_str()).flatten() {
+        for url in ref_data.iter().filter_map(|x| x["url"].as_str()) {
             urls.push(url.to_owned());
         }
     }
