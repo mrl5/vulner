@@ -10,6 +10,7 @@ use reqwest::Client;
 use serde_json::Value;
 use std::error::Error;
 use std::path::Path;
+mod cisa;
 mod nvd;
 
 pub const CPE_MATCH_FEED: &str = nvd::CPE_MATCH_FEED;
@@ -25,8 +26,11 @@ pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Erro
     nvd::fetch_feed_checksum(client).await
 }
 
-pub fn get_cves_summary(full_cve_resp: &Value) -> Vec<CveSummary> {
-    nvd::get_cves_summary(full_cve_resp)
+pub fn get_cves_summary(
+    full_cve_resp: &Value,
+    known_exploitable_cves: Option<&[String]>,
+) -> Vec<CveSummary> {
+    nvd::get_cves_summary(full_cve_resp, known_exploitable_cves)
 }
 
 pub async fn download_cpe_match_feed(
@@ -35,4 +39,14 @@ pub async fn download_cpe_match_feed(
 ) -> Result<(), Box<dyn Error>> {
     log::info!("downloading CPE match feed ...");
     nvd::download_cpe_match_feed(client, feed_path).await
+}
+
+pub async fn fetch_known_exploited_vulns(client: &Client) -> Result<Value, Box<dyn Error>> {
+    log::info!("fetching known exploited vulnerabilities ...");
+    cisa::fetch_known_exploited_vulns(client).await
+}
+
+pub async fn fetch_known_exploited_cves(client: &Client) -> Result<Vec<String>, Box<dyn Error>> {
+    log::info!("fetching known exploited CVEs ...");
+    cisa::fetch_known_exploited_cves(client).await
 }
