@@ -42,6 +42,7 @@ $ cat ~/vulner/scan-results/2022-01-30UTC/*/app-emulation/*containerd*.txt | jq 
 ```
 {
   "id": "CVE-2021-41103",
+  "is_known_exploited_vuln": false,
   "description": "A bug was found in containerd where container root directories and some plugins had insufficiently restricted permissions, allowing otherwise unprivileged Linux users to traverse directory contents and execute programs.",
 ,
   "urls": [
@@ -91,7 +92,7 @@ RUST_LOG=debug vulner sync && echo '
     ]
   }
 ]
-' | jq -c '.' | vulner cpe | vulner cve --summary
+' | jq -c '.' | vulner cpe | vulner cve --summary --check-known-exploited
 ```
 example produces:
 ```
@@ -101,7 +102,7 @@ example produces:
 [2022-01-29T14:22:27Z INFO  vulner::utils] computing checksum of "/tmp/vulner/feeds/json/nvdcpematch-1.0.json" ...
 [2022-01-29T14:22:28Z DEBUG reqwest::async_impl::client] response '200 OK' for https://nvd.nist.gov/feeds/json/cpematch/1.0/nvdcpematch-1.0.meta
 CPE match feed is up to date, available in "/tmp/vulner/feeds/json/nvdcpematch-1.0.json"
-{"id":"CVE-2020-7595","desc":{"description_data":[{"lang":"en","value":"xmlStringLenDecodeEntities in parser.c in libxml2 2.9.10 has an infinite loop in a certain end-of-file situation."}]},"impact":{"acInsufInfo":false,"cvssV2":{"accessComplexity":"LOW","accessVector":"NETWORK","authentication":"NONE","availabilityImpact":"PARTIAL","baseScore":5,"confidentialityImpact":"NONE","integrityImpact":"NONE","vectorString":"AV:N/AC:L/Au:N/C:N/I:N/A:P","version":"2.0"},"exploitabilityScore":10,"impactScore":2.9,"obtainAllPrivilege":false,"obtainOtherPrivilege":false,"obtainUserPrivilege":false,"severity":"MEDIUM","userInteractionRequired":false}}
+{"id":"CVE-2020-7595","is_known_exploited_vuln":false,"desc":{"description_data":[{"lang":"en","value":"xmlStringLenDecodeEntities in parser.c in libxml2 2.9.10 has an infinite loop in a certain end-of-file situation."}]},"impact":{"acInsufInfo":false,"cvssV2":{"accessComplexity":"LOW","accessVector":"NETWORK","authentication":"NONE","availabilityImpact":"PARTIAL","baseScore":5,"confidentialityImpact":"NONE","integrityImpact":"NONE","vectorString":"AV:N/AC:L/Au:N/C:N/I:N/A:P","version":"2.0"},"exploitabilityScore":10,"impactScore":2.9,"obtainAllPrivilege":false,"obtainOtherPrivilege":false,"obtainUserPrivilege":false,"severity":"MEDIUM","userInteractionRequired":false}}
 ```
 
 

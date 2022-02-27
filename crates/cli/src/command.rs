@@ -22,7 +22,11 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
             packages_batch,
             cpe_feed,
         } => cpe::execute(get_input(packages_batch)?, cpe_feed.feed_dir).await,
-        Command::Cve { cpe_batch, summary } => cve::execute(get_input(cpe_batch)?, summary).await,
+        Command::Cve {
+            cpe_batch,
+            summary,
+            check_known_exploited,
+        } => cve::execute(get_input(cpe_batch)?, summary, check_known_exploited).await,
         Command::Scan {
             cpe_feed,
             out_dir,
@@ -52,6 +56,13 @@ pub enum Command {
         cpe_batch: Option<String>,
         #[structopt(short, long, help = "Prints CVE summary instead of full response")]
         summary: bool,
+
+        #[structopt(
+            short,
+            long,
+            help = "Additonal check agains known exploited vulnerabilities catalog"
+        )]
+        check_known_exploited: bool,
     },
 
     #[structopt(

@@ -12,6 +12,7 @@ use std::fmt;
 #[derive(Serialize, Debug)]
 pub struct CveSummary {
     pub id: String,
+    pub is_known_exploited_vuln: Option<bool>,
     pub description: String,
     pub urls: Vec<String>,
 }
@@ -20,6 +21,7 @@ impl CveSummary {
     pub fn new(id: String, description: String, urls: Vec<String>) -> Self {
         Self {
             id,
+            is_known_exploited_vuln: None,
             description,
             urls,
         }

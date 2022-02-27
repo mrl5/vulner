@@ -35,18 +35,22 @@ pub async fn fetch_cves_by_cpe(client: &Client, cpe: &str) -> Result<Value, Box<
     Ok(json)
 }
 
-pub fn get_cves_summary(full_cve_resp: &Value) -> Vec<CveSummary> {
-    let mut ids = vec![];
-    if let Some(items) = full_cve_resp["result"]["CVE_Items"].as_array() {
-        for item in items {
-            let cve_data = &item["cve"];
-            if let Some(summary) = get_cve_summary(cve_data) {
-                ids.push(summary);
+pub fn get_cves_summary(
+    full_cve_resp: &Value,
+    known_exploitable_cves: Option<&[String]>,
+) -> Vec<CveSummary> {
+    let mut summary_items = vec![];
+
+    if let Some(resp_items) = full_cve_resp["result"]["CVE_Items"].as_array() {
+        for resp_item in resp_items {
+            let cve_data = &resp_item["cve"];
+            if let Some(summary) = get_cve_summary(cve_data, known_exploitable_cves) {
+                summary_items.push(summary);
             }
         }
     }
 
-    ids
+    summary_items
 }
 
 pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Error>> {
@@ -109,13 +113,22 @@ fn get_checksum(meta: String) -> Result<String, io::Error> {
     }
 }
 
-fn get_cve_summary(cve_data: &Value) -> Option<CveSummary> {
+fn get_cve_summary(
+    cve_data: &Value,
+    known_exploitable_cves: Option<&[String]>,
+) -> Option<CveSummary> {
     if let Some(id) = cve_data["CVE_data_meta"]["ID"].as_str() {
-        return Some(CveSummary::new(
+        let mut summary = CveSummary::new(
             id.to_owned(),
             get_cve_desc(cve_data),
             get_cve_urls(id, cve_data),
-        ));
+        );
+
+        if let Some(kec) = known_exploitable_cves {
+            summary.is_known_exploited_vuln = Some(kec.contains(&id.to_owned()));
+        }
+
+        return Some(summary);
     }
     None
 }
@@ -147,11 +160,29 @@ fn get_cve_urls(id: &str, cve_data: &Value) -> Vec<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::from_str;
+
     #[test]
     fn it_should_filter_checksum() {
         let checksum = "f283d332a8a66ecb23d49ee385ce42fca691e598da29475beb0b3556ab1fe02e";
         let test_data = "lastModifiedDate:2022-01-22T00:10:15-05:00\r\nsize:601269818\r\nzipSize:21871360\r\ngzSize:21871224\r\nsha256:F283D332A8A66ECB23D49EE385CE42FCA691E598DA29475BEB0B3556AB1FE02E\r\n";
 
         assert_eq!(get_checksum(test_data.to_owned()).unwrap(), checksum);
+    }
+
+    #[test]
+    fn it_should_recognize_known_exploitable_cves() {
+        let known_exploitable_cves = vec!["CVE-2021-22204".to_owned()];
+        let listed_cve = from_str(r#"{"CVE_data_meta":{"ASSIGNER":"cve@gitlab.com","ID":"CVE-2021-22204"},"data_format":"MITRE","data_type":"CVE","data_version":"4.0","description":{"description_data":[{"lang":"en","value":"Improper neutralization of user data in the DjVu file format in ExifTool versions 7.44 and up allows arbitrary code execution when parsing the malicious image"}]},"problemtype":{"problemtype_data":[{"description":[{"lang":"en","value":"CWE-74"}]}]},"references":{"reference_data":[]}}"#).unwrap();
+        let unlisted_cve = from_str(r#"{"CVE_data_meta":{"ASSIGNER":"cve@mitre.org","ID":"CVE-2022-23935"},"data_format":"MITRE","data_type":"CVE","data_version":"4.0","description":{"description_data":[{"lang":"en","value":"lib/Image/ExifTool.pm in ExifTool before 12.38 mishandles a $file =~ /\\|$/ check."}]},"problemtype":{"problemtype_data":[{"description":[{"lang":"en","value":"NVD-CWE-noinfo"}]}]},"references":{"reference_data":[]}}"#).unwrap();
+
+        let summary = get_cve_summary(&listed_cve, None).unwrap();
+        assert_eq!(summary.is_known_exploited_vuln, None);
+
+        let summary = get_cve_summary(&listed_cve, Some(&known_exploitable_cves)).unwrap();
+        assert_eq!(summary.is_known_exploited_vuln, Some(true));
+
+        let summary = get_cve_summary(&unlisted_cve, Some(&known_exploitable_cves)).unwrap();
+        assert_eq!(summary.is_known_exploited_vuln, Some(false));
     }
 }

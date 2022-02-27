@@ -12,7 +12,9 @@ use os_adapter::adapter::get_adapter;
 use reqwest::Client;
 use security_advisories::cve_summary::CveSummary;
 use security_advisories::http::get_client;
-use security_advisories::service::{fetch_cves_by_cpe, get_cves_summary, CPE_MATCH_FEED};
+use security_advisories::service::{
+    fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary, CPE_MATCH_FEED,
+};
 use std::error::Error;
 use std::fs::create_dir_all;
 use std::fs::File;
@@ -42,10 +44,12 @@ pub async fn execute(
 
     log::info!("listing all catpkgs ...");
     let catpkgs = os.get_all_catpkgs()?;
+    let known_exploited_cves = fetch_known_exploited_cves(&client).await?;
+
     for (ctg, pkgs) in catpkgs {
         let cwd = out_dir.join(&ctg);
         log::debug!("processing {} ...", ctg);
-        handle_pkgs(&client, &feed, &cwd, &ctg, &pkgs).await?;
+        handle_pkgs(&client, &feed, &cwd, &ctg, &pkgs, &known_exploited_cves).await?;
     }
 
     println!("Done. You can find results in {:?}", out_dir.as_os_str());
@@ -58,6 +62,7 @@ async fn handle_pkgs(
     cwd: &Path,
     category: &str,
     pkgs: &[Package],
+    known_exploited_cves: &[String],
 ) -> Result<(), Box<dyn Error>> {
     let pattern = get_grep_patterns(pkgs)?;
     let matches = query(pattern, feed)?;
@@ -74,7 +79,7 @@ async fn handle_pkgs(
         "found CPEs for packages in {}. Searching for CVEs ...",
         category
     );
-    handle_cves(client, cwd, category, &matches).await
+    handle_cves(client, cwd, category, &matches, known_exploited_cves).await
 }
 
 async fn handle_cves(
@@ -82,11 +87,12 @@ async fn handle_cves(
     cwd: &Path,
     category: &str,
     matches: &[String],
+    known_exploited_cves: &[String],
 ) -> Result<(), Box<dyn Error>> {
     let mut already_notified = false;
     for cpe in matches {
         let cves = match fetch_cves_by_cpe(client, cpe).await {
-            Ok(res) => get_cves_summary(&res),
+            Ok(res) => get_cves_summary(&res, Some(known_exploited_cves)),
             Err(e) => {
                 log::error!("{}", e);
                 vec![]
