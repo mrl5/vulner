@@ -1,3 +1,13 @@
+# [0.4.0](https://github.com/mrl5/vulner/compare/v0.3.1...v0.4.0) (2022-02-28)
+
+
+### Features
+
+* **cli:** kev - new command for printing known exploited vulnerabilities ([96bc9a3](https://github.com/mrl5/vulner/commit/96bc9a3766e97838c1e29d7214672b422f0a1493))
+* **cli:** recognize known exploited CVEs ([c452ad9](https://github.com/mrl5/vulner/commit/c452ad947678604051d41f5732256ad70cac6641))
+
+
+
 ## [0.3.1](https://github.com/mrl5/vulner/compare/v0.3.0...v0.3.1) (2022-02-26)
 
 
