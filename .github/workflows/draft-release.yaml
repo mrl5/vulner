@@ -17,17 +17,26 @@ jobs:
         with:
           submodules: true
 
-      - name: Create artifact
+      - name: Create TAR.GZ artifact
         run: |
-          mkdir artifacts
+          mkdir -p artifacts
+          tar czhvf \
+            artifacts/full-source.tar.gz \
+            --exclude="*metarepo-cpe-tag*" \
+            crates/ Cargo.* Makefile scripts/ README.md LICENSE
+
+      - name: Create ZIP artifact
+        run: |
+          mkdir -p artifacts
           zip --exclude "*metarepo-cpe-tag*" \
             --recurse-paths \
             artifacts/full-source.zip \
             crates/ Cargo.* Makefile scripts/ README.md LICENSE
 
-      - name: Build from artifact
+      - name: Build from TAR.GZ artifact
         run: |
-          unzip artifacts/full-source.zip -d build
+          mkdir -p build
+          tar xzvf artifacts/full-source.tar.gz --directory=build
           cd build/
           make build
 
@@ -44,8 +53,19 @@ jobs:
           draft: true
           prerelease: true
 
-      - name: Upload release asset
-        id: upload-release-asset
+      - name: Upload TAR.GZ release asset
+        id: upload-tar-gz-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/full-source.tar.gz
+          asset_name: full-source.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload ZIP release asset
+        id: upload-zip-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
