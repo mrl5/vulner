@@ -12,6 +12,7 @@ def run(payload: list) -> str:
 
 
 def handle_list(packages: list) -> list:
+    assert len(packages) > 0, "expected non empty list"
     cpe_patterns = []
     for package in packages:
         cpe_patterns = cpe_patterns + handle_dict(package)

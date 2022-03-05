@@ -47,6 +47,10 @@ pub async fn execute(
     let known_exploited_cves = fetch_known_exploited_cves(&client).await?;
 
     for (ctg, pkgs) in catpkgs {
+        if pkgs.len() == 0 {
+            continue;
+        }
+
         let cwd = out_dir.join(&ctg);
         log::debug!("processing {} ...", ctg);
         handle_pkgs(&client, &feed, &cwd, &ctg, &pkgs, &known_exploited_cves).await?;

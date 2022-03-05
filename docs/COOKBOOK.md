@@ -8,6 +8,7 @@ vulner --help
 - [Scanning Funtoo Linux system for CVEs](#scanning-funtoo-linux-system-for-cves)
 - [Listing CVEs for given packages](#listing-cves-for-given-packages)
 - [Printing known exploited vulnerabilities catalog](#printing-known-exploited-vulnerabilities-catalog)
+- [Scanning packages in Funtoo Linux kit for CVEs](#scanning-packages-in-funtoo-linux-kit-for-cves)
 
 
 ## Scanning Funtoo Linux system for CVEs
@@ -54,6 +55,19 @@ $ cat ~/vulner/scan-results/2022-01-30UTC/*/app-emulation/*containerd*.txt | jq 
     "https://www.debian.org/security/2021/dsa-5002"
   ]
 }
+```
+
+
+## Scanning packages in Funtoo Linux kit for CVEs
+```bash
+kit="gnome-kit"
+
+export VULNER_FEED_DIR=$HOME/vulner/feeds/json
+export VULNER_OUT_DIR=$HOME/vulner/${kit}-scan-results
+export RUST_LOG=info
+
+vulner sync
+vulner scan -p /var/git/meta-repo/kits/${kit}/
 ```
 
 

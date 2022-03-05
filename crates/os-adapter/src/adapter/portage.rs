@@ -8,7 +8,7 @@
 use cpe_tag::package::{convert_to_pkg, Package};
 use std::collections::HashMap;
 use std::error::Error;
-use std::fs::read_dir;
+use std::fs::{read_dir, DirEntry};
 use std::path::{Path, PathBuf};
 
 pub trait Portage {
@@ -28,7 +28,7 @@ where
     fn get_all_catpkgs(&self) -> Result<HashMap<String, Vec<Package>>, Box<dyn Error>> {
         let pkg_prefix_adapter: HashMap<&str, String> =
             HashMap::from([("dev-libs", "lib".to_owned())]);
-        let skipped_dirs = vec!["virtual"];
+        let skipped_dirs = vec!["eclass", "licenses", "metadata", "profiles", "virtual"];
         let mut all_catpkgs = HashMap::new();
 
         if !&self.get_pkg_dir().exists() {
@@ -39,21 +39,21 @@ where
 
         for category in read_dir(&self.get_pkg_dir())? {
             let category = category?;
-            let path = &category.path();
+            let cat_path = &category.path();
 
-            if !path.is_dir() {
+            if !cat_path.is_dir() {
                 continue;
             }
 
             match category.file_name().into_string() {
                 Ok(ctgr) => {
-                    if skipped_dirs.contains(&ctgr.as_str()) {
+                    if skipped_dirs.contains(&ctgr.as_str()) || ctgr.starts_with('.') {
                         log::debug!("SKIPPING packages in {} ...", ctgr);
                         continue;
                     }
 
                     log::debug!("collecting packages in {} ...", ctgr);
-                    let pkgs = list_pkgs(path, pkg_prefix_adapter.get(ctgr.as_str()))?;
+                    let pkgs = list_pkgs(cat_path, pkg_prefix_adapter.get(ctgr.as_str()))?;
                     all_catpkgs.insert(ctgr, pkgs);
                 }
                 Err(os_path) => {
@@ -72,30 +72,54 @@ fn list_pkgs(path: &Path, prefix: Option<&String>) -> Result<Vec<Package>, Box<d
 
     for pkg in read_dir(path)? {
         let pkg = pkg?;
-        let path = &pkg.path();
+        let pkg_path = &pkg.path();
+        if !pkg_path.is_dir() {
+            continue;
+        }
+        push_pkgs(pkg_path, prefix, &mut pkgs)?;
+    }
 
-        if !path.is_dir() {
+    Ok(pkgs)
+}
+
+fn push_pkgs(
+    path: &Path,
+    prefix: Option<&String>,
+    pkgs: &mut Vec<Package>,
+) -> Result<(), Box<dyn Error>> {
+    for entry in read_dir(path)? {
+        let entry = entry?;
+        if !is_ebuild(&entry) {
             continue;
         }
 
-        match pkg.file_name().into_string() {
-            Ok(p) => {
-                if let Some(converted) = convert_to_pkg(&p) {
+        if let Ok(ebuild) = entry.file_name().into_string() {
+            let pkg: Vec<&str> = ebuild.rsplit(".ebuild").collect();
+            let pkg = pkg[1].to_owned();
+            if let Some(converted) = convert_to_pkg(&pkg) {
+                pkgs.push(converted);
+            }
+
+            if let Some(prfx) = prefix {
+                if let Some(converted) = convert_to_pkg(&format!("{}{}", prfx, &pkg)) {
                     pkgs.push(converted);
                 }
-
-                if let Some(prfx) = prefix {
-                    if let Some(converted) = convert_to_pkg(&format!("{}{}", prfx, &p)) {
-                        pkgs.push(converted);
-                    }
-                }
-            }
-            Err(os_string) => {
-                log::error!("skipping {:?}", os_string);
-                continue;
             }
         }
     }
 
-    Ok(pkgs)
+    Ok(())
+}
+
+fn is_ebuild(entry: &DirEntry) -> bool {
+    if !entry.path().is_file() {
+        return false;
+    }
+
+    if let Ok(file_name) = entry.file_name().into_string() {
+        return file_name.ends_with(".ebuild");
+    }
+
+    log::error!("malformed file name {:?}", entry.file_name());
+    false
 }
