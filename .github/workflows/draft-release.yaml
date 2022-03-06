@@ -17,27 +17,29 @@ jobs:
         with:
           submodules: true
 
-      - name: Create TAR.GZ artifact
+      - name: Get custom tarball name
+        id: get_tarball_name
+        run: echo ::set-output name=TARBALL_NAME::vulner-${{ ref_name }}
+
+      - name: Get archived folder name for custom tarball
+        id: get_archived_folder_name
+        run: echo ::set-output name=ARCHIVED_FOLDER::${{ github.repository_owner }}-vulner-$(git rev-parse --short HEAD)
+
+      - name: Create custom tarball artifact
         run: |
           mkdir -p artifacts
           tar czhvf \
-            artifacts/full-source.tar.gz \
+            artifacts/${{ steps.get_tarball_name.outputs.TARBALL_NAME }}.tar.gz \
             --exclude="*metarepo-cpe-tag*" \
-            crates/ Cargo.* Makefile scripts/ README.md LICENSE
+            vulner/crates/ vulner/Cargo.lock vulner/Cargo.toml vulner/Makefile vulner/scripts/ vulner/README.md vulner/LICENSE \
+            --transform s/vulner/${{ steps.get_archived_folder_name.outputs.ARCHIVED_FOLDER }}/
 
-      - name: Create ZIP artifact
-        run: |
-          mkdir -p artifacts
-          zip --exclude "*metarepo-cpe-tag*" \
-            --recurse-paths \
-            artifacts/full-source.zip \
-            crates/ Cargo.* Makefile scripts/ README.md LICENSE
-
-      - name: Build from TAR.GZ artifact
+      - name: Build from custom tarball artifact
         run: |
           mkdir -p build
-          tar xzvf artifacts/full-source.tar.gz --directory=build
-          cd build/
+          tar xzvf artifacts/${{ steps.get_tarball_name.outputs.TARBALL_NAME }}.tar.gz \
+            --directory=build
+          cd build/${{ steps.get_archived_folder_name.outputs.ARCHIVED_FOLDER }}
           make build
 
       - name: Create draft release
@@ -60,17 +62,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/full-source.tar.gz
-          asset_name: full-source.tar.gz
+          asset_path: ./artifacts/${{ steps.get_tarball_name.outputs.TARBALL_NAME }}.tar.gz
+          asset_name: "Full source code"
           asset_content_type: application/gzip
-
-      - name: Upload ZIP release asset
-        id: upload-zip-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/full-source.zip
-          asset_name: full-source.zip
-          asset_content_type: application/zip
