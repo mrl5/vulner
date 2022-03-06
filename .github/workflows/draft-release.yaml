@@ -19,7 +19,7 @@ jobs:
 
       - name: Get custom tarball name
         id: get_tarball_name
-        run: echo ::set-output name=TARBALL_NAME::vulner-${{ ref_name }}
+        run: echo ::set-output name=TARBALL_NAME::vulner-${{ github.ref_name }}
 
       - name: Get archived folder name for custom tarball
         id: get_archived_folder_name
