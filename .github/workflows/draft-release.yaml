@@ -64,5 +64,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./artifacts/${{ steps.get_tarball_name.outputs.TARBALL_NAME }}.tar.gz
-          asset_name: "Full source code"
+          asset_name: ${{ steps.get_tarball_name.outputs.TARBALL_NAME }}.tar.gz
           asset_content_type: application/gzip
