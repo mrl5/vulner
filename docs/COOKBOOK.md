@@ -6,9 +6,10 @@ vulner --help
 
 ## Content
 - [Scanning Funtoo Linux system for CVEs](#scanning-funtoo-linux-system-for-cves)
+- [Scanning packages in Funtoo Linux kit for CVEs](#scanning-packages-in-funtoo-linux-kit-for-cves)
+- [Scanning Funtoo Linux meta-repo for CVEs](#scanning-funtoo-linux-meta-repo-for-cves)
 - [Listing CVEs for given packages](#listing-cves-for-given-packages)
 - [Printing known exploited vulnerabilities catalog](#printing-known-exploited-vulnerabilities-catalog)
-- [Scanning packages in Funtoo Linux kit for CVEs](#scanning-packages-in-funtoo-linux-kit-for-cves)
 
 
 ## Scanning Funtoo Linux system for CVEs
@@ -67,7 +68,18 @@ export VULNER_OUT_DIR=$HOME/vulner/${kit}-scan-results
 export RUST_LOG=info
 
 vulner sync
-vulner scan -p /var/git/meta-repo/kits/${kit}/
+vulner scan --pkg-dir /var/git/meta-repo/kits/${kit}/
+```
+
+
+## Scanning Funtoo Linux meta-repo for CVEs
+```bash
+export VULNER_FEED_DIR=$HOME/vulner/feeds/json
+export VULNER_OUT_DIR=$HOME/vulner/${kit}-scan-results
+export RUST_LOG=info
+
+vulner sync
+vulner scan --pkg-dir /var/git/meta-repo/ --recursive
 ```
 
 
