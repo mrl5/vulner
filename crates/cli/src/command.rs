@@ -31,7 +31,8 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
             cpe_feed,
             out_dir,
             pkg_dir,
-        } => scan::execute(cpe_feed.feed_dir, out_dir, pkg_dir).await,
+            recursive,
+        } => scan::execute(cpe_feed.feed_dir, out_dir, pkg_dir, recursive).await,
         Command::KnownExploitedVulns {} => known_exploited_vulns::execute().await,
     }
 }
@@ -78,6 +79,15 @@ pub enum Command {
 
         #[structopt(short = "p", long = "pkg-dir", env = "VULNER_PKG_DIR")]
         pkg_dir: Option<PathBuf>,
+
+        #[structopt(
+            short,
+            long,
+            help = "Recurisve scan for Funtoo Linux meta-repo",
+            required_if("pkg-dir", "/var/git/meta-repo"),
+            required_if("pkg-dir", "/var/git/meta-repo/")
+        )]
+        recursive: bool,
     },
 
     #[structopt(
