@@ -5,7 +5,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use crate::conf::VulnerConfig;
 use crate::input::get_input;
+use confy::load;
 use std::error::Error;
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -16,6 +18,9 @@ mod scan;
 mod sync;
 
 pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
+    let cfg: VulnerConfig = load(crate::NAME).unwrap_or_default();
+    log::debug!("loaded cfg {:#?}", cfg);
+
     match cmd {
         Command::Sync { cpe_feed } => sync::execute(cpe_feed.feed_dir).await,
         Command::Cpe {
