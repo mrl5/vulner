@@ -16,9 +16,17 @@ mod nvd;
 pub const CPE_MATCH_FEED: &str = nvd::CPE_MATCH_FEED;
 pub const CPE_MATCH_FEED_GZ: &str = nvd::CPE_MATCH_FEED_GZ;
 
-pub async fn fetch_cves_by_cpe(client: &Client, cpe: &str) -> Result<Value, Box<dyn Error>> {
+pub trait ApiKeys {
+    fn get_nvd_api_key(&self) -> Option<String>;
+}
+
+pub async fn fetch_cves_by_cpe(
+    client: &Client,
+    cpe: &str,
+    api_keys: &'_ dyn ApiKeys,
+) -> Result<Value, Box<dyn Error>> {
     log::debug!("fetching CVEs by CPE ...");
-    nvd::fetch_cves_by_cpe(client, cpe).await
+    nvd::fetch_cves_by_cpe(client, cpe, api_keys.get_nvd_api_key()).await
 }
 
 pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Error>> {

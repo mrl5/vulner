@@ -23,10 +23,19 @@ const HOME_URL: &str = "https://nvd.nist.gov";
 const API_URL: &str = "https://services.nvd.nist.gov/rest/json";
 const CPE_FEED_PATH: &str = "feeds/json/cpematch/1.0";
 
-pub async fn fetch_cves_by_cpe(client: &Client, cpe: &str) -> Result<Value, Box<dyn Error>> {
+pub async fn fetch_cves_by_cpe(
+    client: &Client,
+    cpe: &str,
+    nvd_api_key: Option<String>,
+) -> Result<Value, Box<dyn Error>> {
     let cve_query_path = "cves/1.0";
     let cpe_query = "cpeMatchString";
-    let url = format!("{}/{}?{}={}", API_URL, cve_query_path, cpe_query, cpe);
+    let mut url = format!("{}/{}?{}={}", API_URL, cve_query_path, cpe_query, cpe);
+
+    if let Some(api_key) = nvd_api_key {
+        url = format!("{}&apiKey={}", url, api_key);
+    }
+
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(reqwest::header::ACCEPT, "application/json".parse()?);
     let res = client.get(&url).headers(headers).send().await?;

@@ -10,6 +10,7 @@ vulner --help
 - [Scanning Funtoo Linux meta-repo for CVEs](#scanning-funtoo-linux-meta-repo-for-cves)
 - [Listing CVEs for given packages](#listing-cves-for-given-packages)
 - [Printing known exploited vulnerabilities catalog](#printing-known-exploited-vulnerabilities-catalog)
+- [Using API keys](#using-api-keys)
 
 
 ## Scanning Funtoo Linux system for CVEs
@@ -155,4 +156,14 @@ command execution via a crafted POST request to various admin endpoints.",
       "vendorProject": "Accellion",
       "vulnerabilityName": "Accellion FTA OS Command Injection Vulnerability"
     },
+```
+
+
+## Using API keys
+```bash
+export NVD_API_KEY=your-api-key
+```
+or change this line in local config:
+```bash
+grep -n nvd_api_key ~/.config/vulner/vulner.toml
 ```
