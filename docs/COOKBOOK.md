@@ -17,7 +17,7 @@ vulner --help
 export VULNER_FEED_DIR=$HOME/vulner/feeds/json
 export VULNER_OUT_DIR=$HOME/vulner/scan-results
 
-RUST_LOG=info vulner sync
+vulner sync
 RUST_LOG=warn vulner scan
 ```
 Results in:
@@ -65,7 +65,6 @@ kit="gnome-kit"
 
 export VULNER_FEED_DIR=$HOME/vulner/feeds/json
 export VULNER_OUT_DIR=$HOME/vulner/${kit}-scan-results
-export RUST_LOG=info
 
 vulner sync
 vulner scan --pkg-dir /var/git/meta-repo/kits/${kit}/
@@ -76,7 +75,6 @@ vulner scan --pkg-dir /var/git/meta-repo/kits/${kit}/
 ```bash
 export VULNER_FEED_DIR=$HOME/vulner/feeds/json
 export VULNER_OUT_DIR=$HOME/vulner/${kit}-scan-results
-export RUST_LOG=info
 
 vulner sync
 vulner scan --pkg-dir /var/git/meta-repo/ --recursive
