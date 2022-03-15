@@ -17,10 +17,9 @@ use security_advisories::service::{
     fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary, CPE_MATCH_FEED,
 };
 use std::error::Error;
-use std::fs::create_dir_all;
-use std::fs::read_dir;
-use std::fs::File;
+use std::fs::{create_dir_all, read_dir, set_permissions, File};
 use std::io::Write;
+use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 
 pub async fn execute(
@@ -42,6 +41,11 @@ pub async fn execute(
 
     log::info!("working in {:?} ...", out_dir);
     create_dir_all(&out_dir)?;
+    let metadata = out_dir.metadata()?;
+    let mut permissions = metadata.permissions();
+    permissions.set_mode(0o700);
+    set_permissions(&out_dir, permissions)?;
+
     let known_exploited_cves = fetch_known_exploited_cves(&client).await?;
 
     log::debug!("getting os adapter ...");
