@@ -5,7 +5,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use crate::conf;
 use crate::input::get_input;
+use confy::load;
 use std::error::Error;
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -16,23 +18,40 @@ mod scan;
 mod sync;
 
 pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
+    let cfg: conf::VulnerConfig = load(crate::NAME).unwrap_or_default();
+    log::debug!("loaded cfg {:#?}", cfg);
+
     match cmd {
         Command::Sync { cpe_feed } => sync::execute(cpe_feed.feed_dir).await,
+
         Command::Cpe {
             packages_batch,
             cpe_feed,
         } => cpe::execute(get_input(packages_batch)?, cpe_feed.feed_dir).await,
+
         Command::Cve {
             cpe_batch,
             summary,
             check_known_exploited,
-        } => cve::execute(get_input(cpe_batch)?, summary, check_known_exploited).await,
+            api_keys: _,
+        } => {
+            cve::execute(
+                get_input(cpe_batch)?,
+                summary,
+                check_known_exploited,
+                cfg.api_keys,
+            )
+            .await
+        }
+
         Command::Scan {
             cpe_feed,
             out_dir,
             pkg_dir,
             recursive,
-        } => scan::execute(cpe_feed.feed_dir, out_dir, pkg_dir, recursive).await,
+            api_keys: _,
+        } => scan::execute(cpe_feed.feed_dir, out_dir, pkg_dir, recursive, cfg.api_keys).await,
+
         Command::KnownExploitedVulns {} => known_exploited_vulns::execute().await,
     }
 }
@@ -64,6 +83,9 @@ pub enum Command {
             help = "Additonal check agains known exploited vulnerabilities catalog"
         )]
         check_known_exploited: bool,
+
+        #[structopt(flatten)]
+        api_keys: conf::ApiKeys,
     },
 
     #[structopt(
@@ -88,6 +110,9 @@ pub enum Command {
             required_if("pkg-dir", "/var/git/meta-repo/")
         )]
         recursive: bool,
+
+        #[structopt(flatten)]
+        api_keys: conf::ApiKeys,
     },
 
     #[structopt(

@@ -10,6 +10,7 @@ vulner --help
 - [Scanning Funtoo Linux meta-repo for CVEs](#scanning-funtoo-linux-meta-repo-for-cves)
 - [Listing CVEs for given packages](#listing-cves-for-given-packages)
 - [Printing known exploited vulnerabilities catalog](#printing-known-exploited-vulnerabilities-catalog)
+- [Using API keys](#using-api-keys)
 
 
 ## Scanning Funtoo Linux system for CVEs
@@ -17,7 +18,7 @@ vulner --help
 export VULNER_FEED_DIR=$HOME/vulner/feeds/json
 export VULNER_OUT_DIR=$HOME/vulner/scan-results
 
-RUST_LOG=info vulner sync
+vulner sync
 RUST_LOG=warn vulner scan
 ```
 Results in:
@@ -65,7 +66,6 @@ kit="gnome-kit"
 
 export VULNER_FEED_DIR=$HOME/vulner/feeds/json
 export VULNER_OUT_DIR=$HOME/vulner/${kit}-scan-results
-export RUST_LOG=info
 
 vulner sync
 vulner scan --pkg-dir /var/git/meta-repo/kits/${kit}/
@@ -76,7 +76,6 @@ vulner scan --pkg-dir /var/git/meta-repo/kits/${kit}/
 ```bash
 export VULNER_FEED_DIR=$HOME/vulner/feeds/json
 export VULNER_OUT_DIR=$HOME/vulner/${kit}-scan-results
-export RUST_LOG=info
 
 vulner sync
 vulner scan --pkg-dir /var/git/meta-repo/ --recursive
@@ -157,4 +156,14 @@ command execution via a crafted POST request to various admin endpoints.",
       "vendorProject": "Accellion",
       "vulnerabilityName": "Accellion FTA OS Command Injection Vulnerability"
     },
+```
+
+
+## Using API keys
+```bash
+export NVD_API_KEY=your-api-key
+```
+or change this line in local config:
+```bash
+grep -n nvd_api_key ~/.config/vulner/vulner.toml
 ```

@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use crate::conf::ApiKeys;
 use chrono::{Timelike, Utc};
 use cpe_tag::package::Package;
 use cpe_tag::query_builder::{get_grep_patterns, query};
@@ -16,10 +17,9 @@ use security_advisories::service::{
     fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary, CPE_MATCH_FEED,
 };
 use std::error::Error;
-use std::fs::create_dir_all;
-use std::fs::read_dir;
-use std::fs::File;
+use std::fs::{create_dir_all, read_dir, set_permissions, File};
 use std::io::Write;
+use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 
 pub async fn execute(
@@ -27,6 +27,7 @@ pub async fn execute(
     out_dir: PathBuf,
     pkg_dir: Option<PathBuf>,
     recursive: bool,
+    api_keys: ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
     // todo: progress bar
     let now = Utc::now();
@@ -40,18 +41,39 @@ pub async fn execute(
 
     log::info!("working in {:?} ...", out_dir);
     create_dir_all(&out_dir)?;
+    let metadata = out_dir.metadata()?;
+    let mut permissions = metadata.permissions();
+    permissions.set_mode(0o700);
+    set_permissions(&out_dir, permissions)?;
+
     let known_exploited_cves = fetch_known_exploited_cves(&client).await?;
 
     log::debug!("getting os adapter ...");
     if !recursive {
         let os = get_adapter(pkg_dir)?;
-        scan(&*os, &out_dir, &client, &feed, &known_exploited_cves).await?;
+        scan(
+            &*os,
+            &out_dir,
+            &client,
+            &feed,
+            &known_exploited_cves,
+            &api_keys,
+        )
+        .await?;
     } else {
         let mut os = get_adapter(None)?;
         let kits_dir = &pkg_dir.unwrap().join("kits");
         for kit in read_dir(&kits_dir)? {
             os.set_pkg_dir(kit?.path());
-            scan(&*os, &out_dir, &client, &feed, &known_exploited_cves).await?;
+            scan(
+                &*os,
+                &out_dir,
+                &client,
+                &feed,
+                &known_exploited_cves,
+                &api_keys,
+            )
+            .await?;
         }
     }
 
@@ -65,6 +87,7 @@ async fn scan(
     client: &Client,
     feed: &Path,
     known_exploited_cves: &[String],
+    api_keys: &ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
     log::info!("listing all catpkgs ...");
     let catpkgs = os.get_all_catpkgs()?;
@@ -76,7 +99,16 @@ async fn scan(
 
         let cwd = out_dir.join(&ctg);
         log::debug!("processing {} ...", ctg);
-        handle_pkgs(client, feed, &cwd, &ctg, &pkgs, known_exploited_cves).await?;
+        handle_pkgs(
+            client,
+            feed,
+            &cwd,
+            &ctg,
+            &pkgs,
+            known_exploited_cves,
+            api_keys,
+        )
+        .await?;
     }
     Ok(())
 }
@@ -88,6 +120,7 @@ async fn handle_pkgs(
     category: &str,
     pkgs: &[Package],
     known_exploited_cves: &[String],
+    api_keys: &ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
     let pattern = get_grep_patterns(pkgs)?;
     let matches = query(pattern, feed)?;
@@ -104,7 +137,15 @@ async fn handle_pkgs(
         "found CPEs for packages in {}. Searching for CVEs ...",
         category
     );
-    handle_cves(client, cwd, category, &matches, known_exploited_cves).await
+    handle_cves(
+        client,
+        cwd,
+        category,
+        &matches,
+        known_exploited_cves,
+        api_keys,
+    )
+    .await
 }
 
 async fn handle_cves(
@@ -113,10 +154,11 @@ async fn handle_cves(
     category: &str,
     matches: &[String],
     known_exploited_cves: &[String],
+    api_keys: &ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
     let mut already_notified = false;
     for cpe in matches {
-        let cves = match fetch_cves_by_cpe(client, cpe).await {
+        let cves = match fetch_cves_by_cpe(client, cpe, api_keys).await {
             Ok(res) => get_cves_summary(&res, Some(known_exploited_cves)),
             Err(e) => {
                 log::error!("{}", e);

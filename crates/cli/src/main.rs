@@ -9,12 +9,15 @@ use std::env;
 use std::process::exit;
 use structopt::{clap::AppSettings, StructOpt};
 mod command;
+mod conf;
 mod input;
 mod utils;
 
+const NAME: &str = "vulner";
+
 #[derive(Debug, StructOpt)]
 #[structopt(
-    name = "vulner",
+    name = NAME,
     about = env!("CARGO_PKG_DESCRIPTION"),
     global_settings(&[
       AppSettings::ColoredHelp
@@ -27,7 +30,9 @@ struct CliOptions {
 
 #[tokio::main]
 async fn main() {
-    env_logger::init();
+    env_logger::init_from_env(
+        env_logger::Env::default().filter_or(env_logger::DEFAULT_FILTER_ENV, "info"),
+    );
     log::debug!("initialized logger");
     let opts = CliOptions::from_args();
 

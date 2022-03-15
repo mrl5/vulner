@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use crate::conf::ApiKeys;
 use cpe_tag::validators::validate_cpe_batch;
 use security_advisories::http::get_client;
 use security_advisories::service::{
@@ -18,6 +19,7 @@ pub async fn execute(
     batch: String,
     show_summary: bool,
     check_known_exploited: bool,
+    api_keys: ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
     log::info!("validating input ...");
     let json = from_str(&batch)?;
@@ -33,7 +35,7 @@ pub async fn execute(
         match v.as_str() {
             Some(cpe) => {
                 log::info!("fetching CVEs by CPE {} ...", cpe);
-                let cves = fetch_cves_by_cpe(&client, cpe).await?;
+                let cves = fetch_cves_by_cpe(&client, cpe, &api_keys).await?;
                 print_cves(
                     cves,
                     show_summary,
