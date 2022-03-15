@@ -82,6 +82,7 @@ pub async fn download_cpe_match_feed(
     let total_size = res
         .content_length()
         .ok_or(format!("Failed to get content length from {}", url))?;
+    log::info!("content length: {}", total_size);
     let pb = get_progress_bar(total_size, &url);
 
     let mut stream = res.bytes_stream();
