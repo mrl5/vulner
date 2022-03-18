@@ -50,7 +50,16 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
             pkg_dir,
             recursive,
             api_keys: _,
-        } => scan::execute(cpe_feed.feed_dir, out_dir, pkg_dir, recursive, cfg.api_keys).await,
+        } => {
+            scan::execute(
+                cpe_feed.feed_dir,
+                out_dir.unwrap_or(cfg.scan_results_dir),
+                pkg_dir,
+                recursive,
+                cfg.api_keys,
+            )
+            .await
+        }
 
         Command::KnownExploitedVulns {} => known_exploited_vulns::execute().await,
     }
@@ -97,7 +106,7 @@ pub enum Command {
         cpe_feed: CpeFeedOpt,
 
         #[structopt(short = "o", long = "out-dir", env = "VULNER_OUT_DIR")]
-        out_dir: PathBuf,
+        out_dir: Option<PathBuf>,
 
         #[structopt(short = "p", long = "pkg-dir", env = "VULNER_PKG_DIR")]
         pkg_dir: Option<PathBuf>,
