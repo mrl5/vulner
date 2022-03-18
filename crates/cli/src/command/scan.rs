@@ -181,9 +181,10 @@ async fn handle_cves(
 }
 
 fn write_report(cwd: &Path, cpe: &str, cves: &[CveSummary]) -> Result<(), Box<dyn Error>> {
-    log::info!("saving report in {:?} ...", cwd.as_os_str());
     create_dir_all(cwd)?;
-    let mut f = File::create(cwd.join(format!("{}.txt", cpe)))?;
+    let f = cwd.join(format!("{}.txt", cpe));
+    log::info!("saving report in {:?} ...", f.as_os_str());
+    let mut f = File::create(f)?;
 
     for cve in cves {
         log::debug!("{}", cve.id);
