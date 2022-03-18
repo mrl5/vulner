@@ -1,3 +1,22 @@
+# [0.5.0](https://github.com/mrl5/vulner/compare/v0.4.0...v0.5.0) (2022-03-18)
+
+
+### Bug Fixes
+
+* **scan:** chmod 700 for scan results directory ([9281be3](https://github.com/mrl5/vulner/commit/9281be32f6ddfda0d209744d7a81c44ec673d7a5))
+
+
+### Features
+
+* **cli:** default out dir in local config ([f014ca7](https://github.com/mrl5/vulner/commit/f014ca742e89d9c5fa3bee54f91487d45c68b83c))
+* **cli:** info as default log level ([9a5d613](https://github.com/mrl5/vulner/commit/9a5d61313b780bdc176866f17f71276d79815a32))
+* **cli:** local config ([f7e3c68](https://github.com/mrl5/vulner/commit/f7e3c6801baa22d5cd3c16fb0e21190df0f35d6a))
+* **cli:** support usage of NVD API key [[#31](https://github.com/mrl5/vulner/issues/31)] ([2168fc9](https://github.com/mrl5/vulner/commit/2168fc9a4fdf6b749b76df72ef9aeb8fdb8a7fc2))
+* **scan:** support recursive scanning of funtoo meta-repo [[#29](https://github.com/mrl5/vulner/issues/29)] ([4ee8a5e](https://github.com/mrl5/vulner/commit/4ee8a5e2d9a8af2a1550fa9be52c631e1babf0cf))
+* **scan:** support scanning the portage tree/kits of ebuilds [[#29](https://github.com/mrl5/vulner/issues/29)] ([338cbf0](https://github.com/mrl5/vulner/commit/338cbf0555882d46d6385a514017d546c544f743))
+
+
+
 # [0.4.0](https://github.com/mrl5/vulner/compare/v0.3.1...v0.4.0) (2022-02-28)
 
 
