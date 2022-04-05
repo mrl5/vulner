@@ -20,7 +20,12 @@ def handle_list(packages: list) -> list:
 
 
 def handle_dict(package: dict) -> list:
-    serialized = serialize_package_json(package)
+    serialized = serialize_package_json(get_package_adapter(package))
     quasi_cpes = list(map(lambda x: x.get("quasi_cpe"), serialized["versions"]))
     quasi_cpes = list(filter(lambda x: x is not None, quasi_cpes))
     return [convert_quasi_cpe_to_regex(qc) for qc in quasi_cpes]
+
+
+def get_package_adapter(package: dict) -> dict:
+    versions_adapter = [{'version': package.get('version')}]
+    return {'name': package.get('name'), 'versions': versions_adapter}

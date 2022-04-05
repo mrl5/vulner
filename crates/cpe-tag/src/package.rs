@@ -7,6 +7,7 @@
 
 use regex::Regex;
 use serde::{Deserialize, Serialize};
+use std::string::ToString;
 
 pub fn convert_to_pkg(raw_pkg: &str) -> Option<Package> {
     let pattern = "(.+)-([0-9]+.*)";
@@ -19,32 +20,27 @@ pub fn convert_to_pkg(raw_pkg: &str) -> Option<Package> {
     if name.is_some() && version.is_some() {
         let name = name?.as_str().to_owned();
         let version = version?.as_str().to_owned();
-        Some(Package::new(name, vec![Version::new(version)]))
+        Some(Package::new(name, version))
     } else {
         None
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Serialize, Deserialize, Debug, Hash, PartialEq, Eq)]
 pub struct Package {
-    name: String,
-    versions: Vec<Version>,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-pub struct Version {
-    version: String,
+    pub name: String,
+    pub version: String,
 }
 
 impl Package {
-    pub fn new(name: String, versions: Vec<Version>) -> Self {
-        Self { name, versions }
+    pub fn new(name: String, version: String) -> Self {
+        Self { name, version }
     }
 }
 
-impl Version {
-    pub fn new(version: String) -> Self {
-        Self { version }
+impl ToString for Package {
+    fn to_string(&self) -> String {
+        format!("{}-{}", self.name, self.version)
     }
 }
 
@@ -55,10 +51,14 @@ mod tests {
     #[test]
     fn it_should_convert_raw_pkg_into_struct() {
         let raw_pkg = "rust-bin-1.58.1";
-        let expected = Some(Package::new(
-            "rust-bin".to_owned(),
-            vec![Version::new("1.58.1".to_owned())],
-        ));
+        let expected = Some(Package::new("rust-bin".to_owned(), "1.58.1".to_owned()));
         assert_eq!(expected, convert_to_pkg(raw_pkg));
+    }
+
+    #[test]
+    fn it_should_implement_to_string() {
+        let expected = "rust-bin-1.58.1";
+        let package = Package::new("rust-bin".to_owned(), "1.58.1".to_owned());
+        assert_eq!(expected.to_owned(), package.to_string());
     }
 }

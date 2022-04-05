@@ -85,14 +85,13 @@ mod tests {
     use super::*;
 
     fn get_valid_packages_batch() -> Value {
-        from_str(r#"[{"name": "busybox", "versions": [{"version": "1.29.3"}]}]"#).unwrap()
+        from_str(r#"[{"name": "busybox", "version": "1.29.3"}]"#).unwrap()
     }
 
     #[test]
     fn it_should_validate_packages_batch() {
         let valid_batch = get_valid_packages_batch();
-        let invalid_batch =
-            from_str(r#"{"name": "busybox", "versions": [{"version": "1.29.3"}]}"#).unwrap();
+        let invalid_batch = from_str(r#"{"name": "busybox", "version": "1.29.3"}"#).unwrap();
         assert!(into_validated_packages(&valid_batch).is_ok());
         assert!(into_validated_packages(&invalid_batch).is_err());
     }

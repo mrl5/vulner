@@ -14,8 +14,8 @@ use std::error::Error;
 use std::path::Path;
 mod py_query_builder;
 
-pub fn get_grep_patterns(packages: &[Package]) -> Result<String, Box<dyn Error>> {
-    py_query_builder::get_grep_patterns(packages)
+pub fn get_regex_pattern(packages: &[Package]) -> Result<String, Box<dyn Error>> {
+    py_query_builder::get_regex_pattern(packages)
 }
 
 pub fn query(pattern: String, feed: &Path) -> Result<Vec<String>, Box<dyn Error>> {
@@ -40,11 +40,15 @@ pub fn query(pattern: String, feed: &Path) -> Result<Vec<String>, Box<dyn Error>
     Ok(get_values(matches))
 }
 
+pub fn get_value(line: &str) -> String {
+    let s: Vec<&str> = line.rsplit(" : ").collect();
+    s[0].trim().trim_matches(',').trim_matches('"').to_owned()
+}
+
 fn get_values(matches: Vec<String>) -> Vec<String> {
     let mut values: Vec<String> = vec![];
     for m in matches {
-        let s: Vec<&str> = m.rsplit(" : ").collect();
-        values.push(s[0].trim().trim_matches(',').trim_matches('"').to_owned());
+        values.push(get_value(&m));
     }
     values.sort();
     values.dedup();

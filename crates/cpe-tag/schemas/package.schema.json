@@ -3,22 +3,13 @@
   "$id": "http://localhost/schemas/package",
   "title": "raw package",
   "type": "object",
-  "required": ["name", "versions"],
+  "required": ["name", "version"],
   "properties": {
     "name": {"type": "string", "description": "package name"},
     "homepages": {
       "type": "array",
       "items": {"type": "string", "description": "project homepage"}
     },
-    "versions": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["version"],
-        "properties": {
-          "version": {"type": "string", "description": "package version"}
-        }
-      }
-    }
+    "version": {"type": "string", "description": "package version"}
   }
 }
