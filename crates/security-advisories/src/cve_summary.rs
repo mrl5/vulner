@@ -13,6 +13,7 @@ use std::fmt;
 pub struct CveSummary {
     pub id: String,
     pub is_known_exploited_vuln: Option<bool>,
+    pub related_cpe: Option<String>,
     pub description: String,
     pub urls: Vec<String>,
 }
@@ -22,6 +23,7 @@ impl CveSummary {
         Self {
             id,
             is_known_exploited_vuln: None,
+            related_cpe: None,
             description,
             urls,
         }

@@ -10,7 +10,7 @@ use pyo3::prelude::*;
 use pythonize::pythonize;
 use std::error::Error;
 
-pub fn get_grep_patterns(packages: &[Package]) -> Result<String, Box<dyn Error>> {
+pub fn get_regex_pattern(packages: &[Package]) -> Result<String, Box<dyn Error>> {
     let from_python = call_python_code(packages);
     Ok(from_python?.to_string())
 }
@@ -72,23 +72,23 @@ mod tests {
     fn it_should_return_grep_patterns() {
         let test_data = [
             [
-                r#"[{"name":"busybox","versions":[{"version":"1.31.0"},{"version":"9999"}]}]"#,
+                r#"[{"name":"busybox","version":"1.31.0"},{"name":"busybox","version":"9999"}]"#,
                 r#":busybox:1\.31\.0:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]"#,
             ],
             [
-                r#"[{"name":"busybox","versions":[{"version":"1.31.0"},{"version":"1.29.3"}]}]"#,
+                r#"[{"name":"busybox","version":"1.31.0"},{"name":"busybox","version":"1.29.3"}]"#,
                 r#":busybox:1\.31\.0:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]|:busybox:1\.29\.3:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]"#,
             ],
             [
-                r#"[{"name":"libxml2","versions":[{"version":"2.9.10-r5"}]},{"name":"openssh","versions":[{"version":"8.4_p1-r3"}]}]"#,
+                r#"[{"name":"libxml2","version":"2.9.10-r5"},{"name":"openssh","version":"8.4_p1-r3"}]"#,
                 r#":libxml2:2\.9\.10:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]|:openssh:8\.4:(p1|\*):[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]"#,
             ],
             [
-                r#"[{"name":"google-chrome","versions":[{"version":"97.0.4692.71"}]}]"#,
+                r#"[{"name":"google-chrome","version":"97.0.4692.71"}]"#,
                 r#"google:chrome:97\.0\.4692\.71:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]"#,
             ],
             [
-                r#"[{"name":"nicotine+","versions":[{"version":"1.4.1-r1"}]}]"#,
+                r#"[{"name":"nicotine+","version":"1.4.1-r1"}]"#,
                 r#":nicotine\+:1\.4\.1:[\*\-]:[^:]+:[^:]+:[^:]+:(linux|\*):[^:]+:[^:]"#,
             ],
         ];
@@ -96,7 +96,7 @@ mod tests {
             let [json, expected] = d;
             let json: Value = from_str(json).unwrap();
             let json = into_validated_packages(&json).unwrap();
-            assert_eq!(get_grep_patterns(&json).unwrap(), expected.to_owned());
+            assert_eq!(get_regex_pattern(&json).unwrap(), expected.to_owned());
         }
     }
 }

@@ -26,17 +26,13 @@ Results in:
 $ tree ~/vulner/scan-results/
 ```
 ```
-└── 2022-01-30UTC
-    └── 11:10:06Z
+└── 2022-04-05UTC
+    └── 21:13:11Z
         ├── app-emulation
-        │   ├── cpe:2.3:a:linuxfoundation:containerd:1.5.5:*:*:*:*:*:*:*.txt
-        │   ├── cpe:2.3:a:linuxfoundation:runc:1.0.1:*:*:*:*:*:*:*.txt
-        │   └── cpe:2.3:a:qemu:qemu:5.2.0:-:*:*:*:*:*:*.txt
-        ├── dev-libs
-        │   ├── cpe:2.3:a:openssl:openssl:1.1.1l:*:*:*:*:*:*:*.txt
-        │   └── cpe:2.3:a:xmlsoft:libxml2:2.9.10:*:*:*:*:*:*:*.txt
+        │   ├── containerd-1.5.9.txt
+        │   └── qemu-6.2.0-r3.txt
         └── x11-terms
-            └── cpe:2.3:a:twistedmatrix:twisted:18.7.0:*:*:*:*:*:*:*.txt
+            └── xterm-346.txt
 ```
 Report for particular package:
 ```bash
@@ -46,6 +42,7 @@ $ cat ~/vulner/scan-results/2022-01-30UTC/*/app-emulation/*containerd*.txt | jq 
 {
   "id": "CVE-2021-41103",
   "is_known_exploited_vuln": false,
+  "related_cpe": "cpe:2.3:a:linuxfoundation:containerd:1.5.5:*:*:*:*:*:*:*",
   "description": "A bug was found in containerd where container root directories and some plugins had insufficiently restricted permissions, allowing otherwise unprivileged Linux users to traverse directory contents and execute programs.",
 ,
   "urls": [
@@ -87,7 +84,7 @@ vulner scan --pkg-dir /var/git/meta-repo/ --recursive
 ### Example 1
 ```bash
 vulner sync
-vulner cpe '[{"name":"lua", "versions":[{"version":"5.3.5-r1"}]}]' | vulner cve --summary
+vulner cpe '[{"name":"lua", "version":"5.3.5-r1"}]' | vulner cve --summary
 ```
 
 ### Example 2
@@ -99,22 +96,15 @@ RUST_LOG=debug vulner sync && echo '
 [
   {
     "name": "busybox",
-    "versions": [
-      {
-        "version": "1.29.3"
-      },
-      {
-        "version": "1.31.0"
-      }
-    ]
+    "version": "1.29.3"
+  },
+  {
+    "name": "busybox",
+    "version": "1.31.0"
   },
   {
     "name": "libxml2",
-    "versions": [
-      {
-        "version": "2.9.10-r5"
-      }
-    ]
+    "version": "2.9.10-r5"
   }
 ]
 ' | jq -c '.' | vulner cpe | vulner cve --summary --check-known-exploited
