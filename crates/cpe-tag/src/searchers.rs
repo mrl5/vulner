@@ -42,7 +42,7 @@ pub fn match_cpes<'a>(
     feed: &'a HashSet<String>,
     pkg: &'a Package,
     re: &'a Regex,
-) -> HashMap<&'a Package, Vec<String>> {
+) -> HashMap<&'a Package, HashSet<String>> {
     let mut cpes = HashMap::new();
     let matches = feed
         .iter()

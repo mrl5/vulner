@@ -153,7 +153,7 @@ async fn handle_pkgs(
     client: &Client,
     cwd: &Path,
     category: &str,
-    pkgs: &[HashMap<&Package, Vec<String>>],
+    pkgs: &[HashMap<&Package, HashSet<String>>],
     known_exploited_cves: &[String],
     api_keys: &ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
@@ -199,17 +199,22 @@ async fn handle_cves(
     cwd: &Path,
     category: &str,
     pkg_name: &str,
-    matches: &[String],
+    matches: &HashSet<String>,
     known_exploited_cves: &[String],
     api_keys: &ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
     let mut already_notified = false;
+    let mut cves: HashSet<CveSummary> = HashSet::new();
+
     for cpe in matches {
-        let cves = match fetch_cves_by_cpe(client, cpe, api_keys).await {
-            Ok(res) => get_cves_summary(&res, Some(known_exploited_cves)),
+        match fetch_cves_by_cpe(client, cpe, api_keys).await {
+            Ok(res) => {
+                for cve in get_cves_summary(&res, Some(known_exploited_cves)) {
+                    cves.insert(cve);
+                }
+            }
             Err(e) => {
                 log::error!("{}", e);
-                vec![]
             }
         };
 
@@ -221,25 +226,22 @@ async fn handle_cves(
             log::warn!("found CVEs for {}/{} ...", category, pkg_name);
             already_notified = true;
         }
-        write_report(cwd, pkg_name, cves, cpe)?;
     }
 
-    Ok(())
+    write_report(cwd, pkg_name, &cves)
 }
 
 fn write_report(
     cwd: &Path,
     pkg_name: &str,
-    cves: Vec<CveSummary>,
-    cpe: &str,
+    cves: &HashSet<CveSummary>,
 ) -> Result<(), Box<dyn Error>> {
     create_dir_all(cwd)?;
     let f = cwd.join(format!("{}.txt", pkg_name));
     log::debug!("saving report in {:?} ...", f.as_os_str());
 
     let mut buffer = OpenOptions::new().create(true).append(true).open(f)?;
-    for mut cve in cves {
-        cve.related_cpe = Some(cpe.to_owned());
+    for cve in cves {
         log::debug!("{}", cve.id);
         writeln!(buffer, "{}", cve)?;
     }

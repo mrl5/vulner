@@ -8,12 +8,12 @@
 use serde::Serialize;
 use serde_json::to_string;
 use std::fmt;
+use std::hash::{Hash, Hasher};
 
 #[derive(Serialize, Debug)]
 pub struct CveSummary {
     pub id: String,
     pub is_known_exploited_vuln: Option<bool>,
-    pub related_cpe: Option<String>,
     pub description: String,
     pub urls: Vec<String>,
 }
@@ -23,7 +23,6 @@ impl CveSummary {
         Self {
             id,
             is_known_exploited_vuln: None,
-            related_cpe: None,
             description,
             urls,
         }
@@ -39,3 +38,17 @@ impl fmt::Display for CveSummary {
         )
     }
 }
+
+impl Hash for CveSummary {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.id.hash(state);
+    }
+}
+
+impl PartialEq for CveSummary {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+impl Eq for CveSummary {}
