@@ -7,4 +7,5 @@
 
 pub mod package;
 pub mod query_builder;
+pub mod searchers;
 pub mod validators;

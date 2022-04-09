@@ -7,7 +7,8 @@
 use crate::conf::ApiKeys;
 use chrono::{Timelike, Utc};
 use cpe_tag::package::Package;
-use cpe_tag::query_builder::{get_regex_pattern, get_value};
+use cpe_tag::query_builder::get_regex_pattern;
+use cpe_tag::searchers::{match_cpes, scrap_cpe};
 use os_adapter::adapter::{get_adapter, OsAdapter};
 use rayon::prelude::*;
 use regex::Regex;
@@ -130,7 +131,7 @@ fn load_feed(feed: &Path, buffer: &mut HashSet<String>) -> Result<(), Box<dyn Er
     let lines = io::BufReader::new(file).lines();
     for line in lines.flatten() {
         if line.contains("cpe23Uri") {
-            buffer.insert(get_value(&line));
+            buffer.insert(scrap_cpe(&line));
         }
     }
     Ok(())
@@ -146,21 +147,6 @@ fn load_regex(
         buffer.push((pkg, re));
     }
     Ok(())
-}
-
-fn match_cpes<'a>(
-    feed: &'a HashSet<String>,
-    pkg: &'a Package,
-    re: &'a Regex,
-) -> HashMap<&'a Package, Vec<String>> {
-    let mut cpes = HashMap::new();
-    let matches = feed
-        .iter()
-        .filter(|feed_entry| re.is_match(feed_entry))
-        .map(|x| x.to_owned())
-        .collect();
-    cpes.insert(pkg, matches);
-    cpes
 }
 
 async fn handle_pkgs(
