@@ -15,6 +15,7 @@ mod nvd;
 
 pub const CPE_MATCH_FEED: &str = nvd::CPE_MATCH_FEED;
 pub const CPE_MATCH_FEED_GZ: &str = nvd::CPE_MATCH_FEED_GZ;
+pub const CPE_KEYWORD_IN_FEED_LINE: &str = nvd::CPE_KEYWORD_IN_FEED_LINE;
 
 pub trait ApiKeys {
     fn get_nvd_api_key(&self) -> Option<String>;

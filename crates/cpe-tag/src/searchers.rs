@@ -11,6 +11,7 @@ use grep_regex::RegexMatcher;
 use grep_searcher::sinks::UTF8;
 use grep_searcher::Searcher;
 use regex::Regex;
+use security_advisories::service::CPE_KEYWORD_IN_FEED_LINE;
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::path::Path;
@@ -53,8 +54,12 @@ pub fn match_cpes<'a>(
 }
 
 pub fn scrap_cpe(line: &str) -> String {
-    let s: Vec<&str> = line.rsplit(" : ").collect();
+    let s: Vec<&str> = line.rsplit(CPE_KEYWORD_IN_FEED_LINE).collect();
     s[0].trim().trim_matches(',').trim_matches('"').to_owned()
+}
+
+pub fn contains_cpe_json_key(line: &str) -> bool {
+    line.contains(CPE_KEYWORD_IN_FEED_LINE)
 }
 
 fn get_uniq_values(matches: Vec<String>) -> HashSet<String> {
@@ -65,6 +70,15 @@ fn get_uniq_values(matches: Vec<String>) -> HashSet<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn it_should_scrap_value() {
+        let line = "    \"cpe23Uri\" : \"cpe:2.3:a:xmlsoft:libxml2:2.9.10:*:*:*:*:*:*:*\",\r\n";
+        assert_eq!(
+            scrap_cpe(line),
+            "cpe:2.3:a:xmlsoft:libxml2:2.9.10:*:*:*:*:*:*:*"
+        );
+    }
+
     #[test]
     fn it_should_return_unique_values() {
         let test_matches = vec![
@@ -97,5 +111,24 @@ mod tests {
         ]);
 
         assert_eq!(get_uniq_values(test_matches), expected);
+    }
+
+    #[test]
+    fn it_should_recognize_line_containing_cpe_value() {
+        let input = vec![
+            (false, "{"),
+            (false, "  \"matches\" : [ {"),
+            (true, "    \"cpe23Uri\" : \"cpe:2.3:a:\\$0.99_kindle_books_project:\\$0.99_kindle_books:6:*:*:*:*:android:*:*\","),
+            (false, "    \"cpe_name\" : [ {"),
+            (true, "      \"cpe23Uri\" : \"cpe:2.3:a:\\$0.99_kindle_books_project:\\$0.99_kindle_books:6:*:*:*:*:android:*:*\""),
+            (false, "    } ]"),
+            (false, "  }, {"),
+            (true, "    \"cpe23Uri\" : \"cpe:2.3:o:-:-:-:*:*:*:*:*:*:*\","),
+            (false, "    \"cpe_name\" : [ ]"),
+            (false, "  }, {"),
+        ];
+        for (expected, line) in input {
+            assert_eq!(contains_cpe_json_key(line), expected);
+        }
     }
 }

@@ -8,7 +8,7 @@ use crate::conf::ApiKeys;
 use chrono::{Timelike, Utc};
 use cpe_tag::package::Package;
 use cpe_tag::query_builder::get_regex_pattern;
-use cpe_tag::searchers::{match_cpes, scrap_cpe};
+use cpe_tag::searchers::{contains_cpe_json_key, match_cpes, scrap_cpe};
 use os_adapter::adapter::{get_adapter, OsAdapter};
 use rayon::prelude::*;
 use regex::Regex;
@@ -130,7 +130,7 @@ fn load_feed(feed: &Path, buffer: &mut HashSet<String>) -> Result<(), Box<dyn Er
     let file = File::open(feed)?;
     let lines = io::BufReader::new(file).lines();
     for line in lines.flatten() {
-        if line.contains("cpe23Uri") {
+        if contains_cpe_json_key(&line) {
             buffer.insert(scrap_cpe(&line));
         }
     }
@@ -157,6 +157,7 @@ async fn handle_pkgs(
     known_exploited_cves: &[String],
     api_keys: &ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
+    let mut any_cpes = false;
     for items in pkgs {
         for (pkg, matches) in items {
             let pkg_name = pkg.to_string();
@@ -165,6 +166,7 @@ async fn handle_pkgs(
                 continue;
             }
 
+            any_cpes = true;
             log::debug!(
                 "found CPE(s) for {}/{}. Searching for CVEs ...",
                 category,
@@ -181,6 +183,13 @@ async fn handle_pkgs(
             )
             .await?;
         }
+    }
+
+    if !any_cpes {
+        log::info!(
+            "no CPEs in {} - this might indicate false negatives ...",
+            category
+        );
     }
     Ok(())
 }
