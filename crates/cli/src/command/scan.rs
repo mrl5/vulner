@@ -19,7 +19,7 @@ use security_advisories::service::{
 };
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
-use std::fs::{create_dir_all, read_dir, set_permissions, File};
+use std::fs::{create_dir_all, read_dir, set_permissions, File, OpenOptions};
 use std::io::{self, BufRead, Write};
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
@@ -241,12 +241,13 @@ fn write_report(
     create_dir_all(cwd)?;
     let f = cwd.join(format!("{}.txt", pkg_name));
     log::debug!("saving report in {:?} ...", f.as_os_str());
-    let mut f = File::create(f)?;
 
+    let mut buffer = OpenOptions::new().create(true).append(true).open(f)?;
     for mut cve in cves {
         cve.related_cpe = Some(cpe.to_owned());
         log::debug!("{}", cve.id);
-        writeln!(f, "{}", cve)?;
+        writeln!(buffer, "{}", cve)?;
     }
+
     Ok(())
 }
