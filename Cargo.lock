@@ -248,8 +248,11 @@ checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 name = "cpe-tag"
 version = "0.2.0"
 dependencies = [
- "grep",
+ "grep-matcher",
+ "grep-regex",
+ "grep-searcher",
  "jsonschema",
+ "lazy_static",
  "log",
  "pyo3",
  "pythonize",
@@ -560,70 +563,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "globset"
-version = "0.4.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "10463d9ff00a2a068db14231982f5132edebad0d7660cd956a1c30292dbcbfbd"
-dependencies = [
- "aho-corasick",
- "bstr",
- "fnv",
- "log",
- "regex",
-]
-
-[[package]]
-name = "grep"
-version = "0.2.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "51cb840c560b45a2ffd8abf00190382789d3f596663d5ffeb2e05931c20e8657"
-dependencies = [
- "grep-cli",
- "grep-matcher",
- "grep-printer",
- "grep-regex",
- "grep-searcher",
-]
-
-[[package]]
-name = "grep-cli"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2dd110c34bb4460d0de5062413b773e385cbf8a85a63fc535590110a09e79e8a"
-dependencies = [
- "atty",
- "bstr",
- "globset",
- "lazy_static",
- "log",
- "regex",
- "same-file",
- "termcolor",
- "winapi-util",
-]
-
-[[package]]
 name = "grep-matcher"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6d27563c33062cd33003b166ade2bb4fd82db1fd6a86db764dfdad132d46c1cc"
 dependencies = [
  "memchr",
-]
-
-[[package]]
-name = "grep-printer"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "05c271a24daedf5675b61a275a1d0af06e03312ab7856d15433ae6cde044dc72"
-dependencies = [
- "base64",
- "bstr",
- "grep-matcher",
- "grep-searcher",
- "serde",
- "serde_json",
- "termcolor",
 ]
 
 [[package]]
@@ -1514,15 +1459,6 @@ name = "ryu"
 version = "1.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "73b4b750c782965c211b42f022f59af1fbceabdd026623714f104152f1ec149f"
-
-[[package]]
-name = "same-file"
-version = "1.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
-dependencies = [
- "winapi-util",
-]
 
 [[package]]
 name = "schannel"

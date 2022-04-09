@@ -5,14 +5,16 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use lazy_static::lazy_static;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::string::ToString;
 
 pub fn convert_to_pkg(raw_pkg: &str) -> Option<Package> {
-    let pattern = "(.+)-([0-9]+.*)";
-    let re = Regex::new(pattern).unwrap();
-    let caps = re.captures(raw_pkg)?;
+    lazy_static! {
+        static ref RE: Regex = Regex::new("^(.+)-([0-9]+.*)$").unwrap();
+    }
+    let caps = RE.captures(raw_pkg)?;
 
     let name = caps.get(1);
     let version = caps.get(2);
