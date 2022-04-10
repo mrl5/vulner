@@ -19,9 +19,6 @@ use std::path::Path;
 pub fn grep(pattern: String, feed: &Path) -> Result<HashSet<String>, Box<dyn Error>> {
     let matcher = RegexMatcher::new_line_matcher(&pattern)?;
     let mut matches: Vec<String> = vec![];
-    if !feed.exists() {
-        log::error!("{:?} doesn't exist", feed.as_os_str());
-    }
 
     Searcher::new().search_path(
         &matcher,

@@ -5,10 +5,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use security_advisories::service::CPE_MATCH_FEED;
 use sha2::{Digest, Sha256};
 use std::error::Error;
 use std::io;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use tokio::fs::File;
 use tokio::process::Command;
 use tokio_stream::StreamExt;
@@ -45,6 +46,17 @@ pub async fn gunzip(target: &Path) -> Result<(), Box<dyn Error>> {
 
     log::debug!("uncompressed {:?}", target.as_os_str());
     Ok(())
+}
+
+pub fn get_feed_path(feed_dir: &Path) -> PathBuf {
+    let feed = feed_dir.join(CPE_MATCH_FEED);
+    if !feed.exists() {
+        log::error!(
+            "{:?} doesn't exist. Did you forget to run `vulner sync`?",
+            feed.as_os_str()
+        );
+    }
+    feed
 }
 
 fn handle_process_err(code: Option<i32>, process_name: &str) -> Result<(), Box<dyn Error>> {

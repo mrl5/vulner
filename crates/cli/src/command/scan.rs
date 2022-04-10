@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 use crate::conf::ApiKeys;
+use crate::utils::get_feed_path;
 use chrono::{Timelike, Utc};
 use cpe_tag::package::Package;
 use cpe_tag::query_builder::get_regex_pattern;
@@ -16,7 +17,7 @@ use reqwest::Client;
 use security_advisories::cve_summary::CveSummary;
 use security_advisories::http::get_client;
 use security_advisories::service::{
-    fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary, CPE_MATCH_FEED,
+    fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary,
 };
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
@@ -39,7 +40,6 @@ pub async fn execute(
         format!("{:02}:{:02}:{:02}Z", now.hour(), now.minute(), now.second()),
     ];
     let out_dir = out_dir.join(date).join(time);
-    let feed = feed_dir.join(CPE_MATCH_FEED);
     let client = get_client()?;
 
     log::info!("working in {:?} ...", out_dir);
@@ -58,7 +58,7 @@ pub async fn execute(
             &*os,
             &out_dir,
             &client,
-            &feed,
+            &feed_dir,
             &known_exploited_cves,
             &api_keys,
         )
@@ -72,7 +72,7 @@ pub async fn execute(
                 &*os,
                 &out_dir,
                 &client,
-                &feed,
+                &feed_dir,
                 &known_exploited_cves,
                 &api_keys,
             )
@@ -88,14 +88,14 @@ async fn scan(
     os: &'_ dyn OsAdapter,
     out_dir: &Path,
     client: &Client,
-    feed: &Path,
+    feed_dir: &Path,
     known_exploited_cves: &[String],
     api_keys: &ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
     log::info!("listing all catpkgs ...");
     let catpkgs = os.get_all_catpkgs()?;
     let mut feed_buffer = HashSet::new();
-    load_feed(feed, &mut feed_buffer)?;
+    load_feed(feed_dir, &mut feed_buffer)?;
 
     for (ctg, pkgs) in catpkgs {
         if pkgs.is_empty() {
@@ -125,8 +125,9 @@ async fn scan(
     Ok(())
 }
 
-fn load_feed(feed: &Path, buffer: &mut HashSet<String>) -> Result<(), Box<dyn Error>> {
+fn load_feed(feed_dir: &Path, buffer: &mut HashSet<String>) -> Result<(), Box<dyn Error>> {
     log::debug!("loading feed into memory ...");
+    let feed = get_feed_path(feed_dir);
     let file = File::open(feed)?;
     let lines = io::BufReader::new(file).lines();
     for line in lines.flatten() {
