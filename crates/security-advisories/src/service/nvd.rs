@@ -19,6 +19,7 @@ use tokio::io::AsyncWriteExt;
 
 pub const CPE_MATCH_FEED: &str = "nvdcpematch-1.0.json";
 pub const CPE_MATCH_FEED_GZ: &str = "nvdcpematch-1.0.json.gz";
+pub const CPE_KEYWORD_IN_FEED_LINE: &str = r#""cpe23Uri" : ""#;
 const HOME_URL: &str = "https://nvd.nist.gov";
 const API_URL: &str = "https://services.nvd.nist.gov/rest/json";
 const CPE_FEED_PATH: &str = "feeds/json/cpematch/1.0";

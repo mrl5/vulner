@@ -5,9 +5,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 use crate::conf::ApiKeys;
+use crate::utils::get_feed_path;
 use chrono::{Timelike, Utc};
 use cpe_tag::package::Package;
-use cpe_tag::query_builder::{get_regex_pattern, get_value};
+use cpe_tag::query_builder::get_regex_pattern;
+use cpe_tag::searchers::{contains_cpe_json_key, match_cpes, scrap_cpe};
 use os_adapter::adapter::{get_adapter, OsAdapter};
 use rayon::prelude::*;
 use regex::Regex;
@@ -15,7 +17,7 @@ use reqwest::Client;
 use security_advisories::cve_summary::CveSummary;
 use security_advisories::http::get_client;
 use security_advisories::service::{
-    fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary, CPE_MATCH_FEED,
+    fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary,
 };
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
@@ -38,7 +40,6 @@ pub async fn execute(
         format!("{:02}:{:02}:{:02}Z", now.hour(), now.minute(), now.second()),
     ];
     let out_dir = out_dir.join(date).join(time);
-    let feed = feed_dir.join(CPE_MATCH_FEED);
     let client = get_client()?;
 
     log::info!("working in {:?} ...", out_dir);
@@ -57,7 +58,7 @@ pub async fn execute(
             &*os,
             &out_dir,
             &client,
-            &feed,
+            &feed_dir,
             &known_exploited_cves,
             &api_keys,
         )
@@ -71,7 +72,7 @@ pub async fn execute(
                 &*os,
                 &out_dir,
                 &client,
-                &feed,
+                &feed_dir,
                 &known_exploited_cves,
                 &api_keys,
             )
@@ -87,14 +88,14 @@ async fn scan(
     os: &'_ dyn OsAdapter,
     out_dir: &Path,
     client: &Client,
-    feed: &Path,
+    feed_dir: &Path,
     known_exploited_cves: &[String],
     api_keys: &ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
     log::info!("listing all catpkgs ...");
     let catpkgs = os.get_all_catpkgs()?;
     let mut feed_buffer = HashSet::new();
-    load_feed(feed, &mut feed_buffer)?;
+    load_feed(feed_dir, &mut feed_buffer)?;
 
     for (ctg, pkgs) in catpkgs {
         if pkgs.is_empty() {
@@ -124,13 +125,14 @@ async fn scan(
     Ok(())
 }
 
-fn load_feed(feed: &Path, buffer: &mut HashSet<String>) -> Result<(), Box<dyn Error>> {
+fn load_feed(feed_dir: &Path, buffer: &mut HashSet<String>) -> Result<(), Box<dyn Error>> {
     log::debug!("loading feed into memory ...");
+    let feed = get_feed_path(feed_dir);
     let file = File::open(feed)?;
     let lines = io::BufReader::new(file).lines();
     for line in lines.flatten() {
-        if line.contains("cpe23Uri") {
-            buffer.insert(get_value(&line));
+        if contains_cpe_json_key(&line) {
+            buffer.insert(scrap_cpe(&line));
         }
     }
     Ok(())
@@ -148,29 +150,15 @@ fn load_regex(
     Ok(())
 }
 
-fn match_cpes<'a>(
-    feed: &'a HashSet<String>,
-    pkg: &'a Package,
-    re: &'a Regex,
-) -> HashMap<&'a Package, Vec<String>> {
-    let mut cpes = HashMap::new();
-    let matches = feed
-        .iter()
-        .filter(|feed_entry| re.is_match(feed_entry))
-        .map(|x| x.to_owned())
-        .collect();
-    cpes.insert(pkg, matches);
-    cpes
-}
-
 async fn handle_pkgs(
     client: &Client,
     cwd: &Path,
     category: &str,
-    pkgs: &[HashMap<&Package, Vec<String>>],
+    pkgs: &[HashMap<&Package, HashSet<String>>],
     known_exploited_cves: &[String],
     api_keys: &ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
+    let mut any_cpes = false;
     for items in pkgs {
         for (pkg, matches) in items {
             let pkg_name = pkg.to_string();
@@ -179,6 +167,7 @@ async fn handle_pkgs(
                 continue;
             }
 
+            any_cpes = true;
             log::debug!(
                 "found CPE(s) for {}/{}. Searching for CVEs ...",
                 category,
@@ -196,6 +185,13 @@ async fn handle_pkgs(
             .await?;
         }
     }
+
+    if !any_cpes {
+        log::info!(
+            "no CPEs in {} - this might indicate false negatives ...",
+            category
+        );
+    }
     Ok(())
 }
 
@@ -204,17 +200,22 @@ async fn handle_cves(
     cwd: &Path,
     category: &str,
     pkg_name: &str,
-    matches: &[String],
+    matches: &HashSet<String>,
     known_exploited_cves: &[String],
     api_keys: &ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
     let mut already_notified = false;
+    let mut cves: HashSet<CveSummary> = HashSet::new();
+
     for cpe in matches {
-        let cves = match fetch_cves_by_cpe(client, cpe, api_keys).await {
-            Ok(res) => get_cves_summary(&res, Some(known_exploited_cves)),
+        match fetch_cves_by_cpe(client, cpe, api_keys).await {
+            Ok(res) => {
+                for cve in get_cves_summary(&res, Some(known_exploited_cves)) {
+                    cves.insert(cve);
+                }
+            }
             Err(e) => {
                 log::error!("{}", e);
-                vec![]
             }
         };
 
@@ -226,25 +227,22 @@ async fn handle_cves(
             log::warn!("found CVEs for {}/{} ...", category, pkg_name);
             already_notified = true;
         }
-        write_report(cwd, pkg_name, cves, cpe)?;
     }
 
-    Ok(())
+    write_report(cwd, pkg_name, &cves)
 }
 
 fn write_report(
     cwd: &Path,
     pkg_name: &str,
-    cves: Vec<CveSummary>,
-    cpe: &str,
+    cves: &HashSet<CveSummary>,
 ) -> Result<(), Box<dyn Error>> {
     create_dir_all(cwd)?;
     let f = cwd.join(format!("{}.txt", pkg_name));
     log::debug!("saving report in {:?} ...", f.as_os_str());
 
     let mut buffer = OpenOptions::new().create(true).append(true).open(f)?;
-    for mut cve in cves {
-        cve.related_cpe = Some(cpe.to_owned());
+    for cve in cves {
         log::debug!("{}", cve.id);
         writeln!(buffer, "{}", cve)?;
     }

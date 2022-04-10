@@ -254,6 +254,7 @@ dependencies = [
  "pyo3",
  "pythonize",
  "regex",
+ "security-advisories",
  "serde",
  "serde_json",
 ]

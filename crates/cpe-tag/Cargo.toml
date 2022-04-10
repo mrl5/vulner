@@ -11,11 +11,16 @@ keywords = ["cpe", "nvd", "linux"]
 independent = true
 
 [dependencies]
+security-advisories = { path = "../security-advisories" }
 pyo3 = { version = "0.15.1", features = ["auto-initialize"] }
 log = "0.4.14"
-grep = "0.2.8"
 jsonschema = "0.14.0"
 serde_json = "1.0.78"
 serde = "1.0.136"
 pythonize = "0.15.0"
-regex = "1.5.4"
+regex = "1.5.5"
+grep-matcher = "0.1.5"
+grep-regex = "0.1.9"
+grep-searcher = "0.1.8"
+
+[features]
