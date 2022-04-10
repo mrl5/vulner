@@ -5,14 +5,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 use crate::conf::ApiKeys;
-use crate::utils::get_feed_path;
+use crate::utils::{get_feed_path, get_memory_size};
 use chrono::{Timelike, Utc};
 use cpe_tag::package::Package;
 use cpe_tag::query_builder::get_regex_pattern;
 use cpe_tag::searchers::{contains_cpe_json_key, match_cpes, scrap_cpe};
 use os_adapter::adapter::{get_adapter, OsAdapter};
 use rayon::prelude::*;
-use regex::Regex;
 use reqwest::Client;
 use security_advisories::cve_summary::CveSummary;
 use security_advisories::http::get_client;
@@ -94,8 +93,11 @@ async fn scan(
 ) -> Result<(), Box<dyn Error>> {
     log::info!("listing all catpkgs ...");
     let catpkgs = os.get_all_catpkgs()?;
-    let mut feed_buffer = HashSet::new();
-    load_feed(feed_dir, &mut feed_buffer)?;
+    let feed_buffer = load_feed(feed_dir)?;
+    log::info!(
+        "allocated {} bytes in memory for feed buffer",
+        get_memory_size(&feed_buffer)
+    );
 
     for (ctg, pkgs) in catpkgs {
         if pkgs.is_empty() {
@@ -104,13 +106,13 @@ async fn scan(
 
         log::debug!("processing {} ...", ctg);
         let cwd = out_dir.join(&ctg);
-        let mut regex_buffer = vec![];
+        let mut pattern_buffer = vec![];
         let mut result_buffer = vec![];
 
-        load_regex(pkgs, &mut regex_buffer)?;
-        regex_buffer
+        load_patterns(pkgs, &mut pattern_buffer)?;
+        pattern_buffer
             .par_iter()
-            .map(|(pkg, re)| match_cpes(&feed_buffer, pkg, re))
+            .map(|(pkg, re_pattern)| match_cpes(&feed_buffer, pkg, re_pattern))
             .collect_into_vec(&mut result_buffer);
         handle_pkgs(
             client,
@@ -125,27 +127,27 @@ async fn scan(
     Ok(())
 }
 
-fn load_feed(feed_dir: &Path, buffer: &mut HashSet<String>) -> Result<(), Box<dyn Error>> {
-    log::debug!("loading feed into memory ...");
+fn load_feed(feed_dir: &Path) -> Result<Vec<Box<str>>, Box<dyn Error>> {
+    log::info!("loading feed into memory ...");
+    let mut buffer = HashSet::new();
     let feed = get_feed_path(feed_dir);
     let file = File::open(feed)?;
     let lines = io::BufReader::new(file).lines();
     for line in lines.flatten() {
         if contains_cpe_json_key(&line) {
-            buffer.insert(scrap_cpe(&line));
+            buffer.insert(scrap_cpe(&line).into_boxed_str());
         }
     }
-    Ok(())
+    Ok(buffer.into_iter().collect())
 }
 
-fn load_regex(
+fn load_patterns(
     pkgs: Vec<Package>,
-    buffer: &mut Vec<(Package, Regex)>,
+    buffer: &mut Vec<(Package, Box<str>)>,
 ) -> Result<(), Box<dyn Error>> {
     for pkg in pkgs {
         let pattern = get_regex_pattern(&[pkg.clone()])?;
-        let re = Regex::new(pattern.as_ref())?;
-        buffer.push((pkg, re));
+        buffer.push((pkg, pattern.into_boxed_str()));
     }
     Ok(())
 }

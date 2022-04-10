@@ -36,15 +36,16 @@ pub fn grep(pattern: String, feed: &Path) -> Result<HashSet<String>, Box<dyn Err
 }
 
 pub fn match_cpes<'a>(
-    feed: &'a HashSet<String>,
+    feed: &[Box<str>],
     pkg: &'a Package,
-    re: &'a Regex,
+    re_pattern: &str,
 ) -> HashMap<&'a Package, HashSet<String>> {
     let mut cpes = HashMap::new();
+    let re = Regex::new(re_pattern).unwrap();
     let matches = feed
         .iter()
         .filter(|feed_entry| re.is_match(feed_entry))
-        .map(|x| x.to_owned())
+        .map(|x| x.to_string())
         .collect();
     cpes.insert(pkg, matches);
     cpes

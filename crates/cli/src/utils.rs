@@ -59,6 +59,11 @@ pub fn get_feed_path(feed_dir: &Path) -> PathBuf {
     feed
 }
 
+pub fn get_memory_size<T>(v: &Vec<T>) -> usize {
+    // https://users.rust-lang.org/t/size-of-heap-allocated-variable/49197/3
+    v.capacity() * std::mem::size_of::<T>() + std::mem::size_of::<Vec<T>>()
+}
+
 fn handle_process_err(code: Option<i32>, process_name: &str) -> Result<(), Box<dyn Error>> {
     match code {
         Some(c) => {
