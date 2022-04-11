@@ -1,6 +1,16 @@
 name: cargo security audit
 on:
+  schedule:
+    - cron: '0 0 * * *'
   push:
+    branches: [ master ]
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
+  pull_request:
+    branches: [ master ]
     paths:
       - 'Cargo.toml'
       - 'Cargo.lock'
