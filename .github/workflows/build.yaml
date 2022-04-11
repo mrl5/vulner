@@ -23,5 +23,12 @@ jobs:
       with:
         submodules: true
 
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: default
+        toolchain: stable
+
+    - uses: Swatinem/rust-cache@v1
+
     - name: Build
       run: cargo build --verbose
