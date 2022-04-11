@@ -32,7 +32,7 @@ lint: fmt check-license-headers
 	cargo clippy --fix --allow-staged
 .PHONY: lint
 
-lint-ci: fmt check-license-headers
+lint-ci: fmt-ci check-license-headers
 	cargo clippy
 .PHONY: lint
 
@@ -44,6 +44,11 @@ fmt:
 	rustfmt crates/**/src/*.rs
 	rustfmt crates/**/src/**/*.rs
 .PHONY: fmt
+
+fmt-ci:
+	rustfmt --check crates/**/src/*.rs
+	rustfmt --check crates/**/src/**/*.rs
+.PHONY: fmt-ci
 
 check-license-headers:
 	./scripts/check-license-header-all-files.sh
