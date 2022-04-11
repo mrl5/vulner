@@ -1,5 +1,6 @@
 # vulner
-[![master status](https://github.com/mrl5/vulner/actions/workflows/rust.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/rust.yaml)
+[![master status](https://github.com/mrl5/vulner/actions/workflows/vulner-src.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/vulner-src.yaml)
+[![security audit status](https://github.com/mrl5/vulner/actions/workflows/cargo-audit.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/cargo-audit.yaml)
 
 Discover CVEs for software.
 
