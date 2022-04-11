@@ -1,0 +1,30 @@
+name: linter
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - '**.rs'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: default
+        toolchain: stable
+
+    - uses: Swatinem/rust-cache@v1
+
+    - name: Lint
+      run: make lint-ci
