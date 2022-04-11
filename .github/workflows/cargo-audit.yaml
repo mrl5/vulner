@@ -1,4 +1,5 @@
 name: cargo security audit
+
 on:
   schedule:
     - cron: '0 0 * * *'
@@ -16,9 +17,15 @@ on:
       - 'Cargo.lock'
       - '**/Cargo.toml'
       - '**/Cargo.lock'
+
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
   security_audit:
+
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v1
       - uses: actions-rs/audit-check@v1

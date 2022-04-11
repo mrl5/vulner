@@ -1,14 +1,6 @@
-name: master
+name: pull request
 
 on:
-  push:
-    branches: [ master ]
-    paths:
-      - '**.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - '**/Cargo.toml'
-      - '**/Cargo.lock'
   pull_request:
     branches: [ master ]
     paths:
