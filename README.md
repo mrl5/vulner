@@ -1,6 +1,5 @@
 # vulner
 [![build status](https://github.com/mrl5/vulner/actions/workflows/build.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/build.yaml)
-[![security audit status](https://github.com/mrl5/vulner/actions/workflows/cargo-audit.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/cargo-audit.yaml)
 [![tests status](https://github.com/mrl5/vulner/actions/workflows/tests.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/tests.yaml)
 [![linter status](https://github.com/mrl5/vulner/actions/workflows/linter.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/linter.yaml)
 
