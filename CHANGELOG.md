@@ -1,3 +1,24 @@
+# [0.6.0](https://github.com/mrl5/vulner/compare/v0.5.0...v0.6.0) (2022-04-12)
+
+
+### Bug Fixes
+
+* cargo audit fix - drop chrono dependency [[#47](https://github.com/mrl5/vulner/issues/47)][[#48](https://github.com/mrl5/vulner/issues/48)] ([2da3ced](https://github.com/mrl5/vulner/commit/2da3cedd3c41e6bd700c0e0fddc50d09f639a197))
+* **scan:** append package report file instead of truncate ([997c582](https://github.com/mrl5/vulner/commit/997c582dc48891c70d663ab6419b1da5b09e8cdf))
+
+
+### Features
+
+* **scan:** package name as report filename ([3f9fa67](https://github.com/mrl5/vulner/commit/3f9fa670d55881308fedc1d6e724c45566c9091e))
+
+
+### Performance Improvements
+
+* **cpe-tag:** avoid compiling the same regex in a loop ([e08f29e](https://github.com/mrl5/vulner/commit/e08f29e27db955a9de6288b2c5fa5c7f912f32b9))
+* **scan:** allocate 40.8% less memory for cpe feed ([7ab77cf](https://github.com/mrl5/vulner/commit/7ab77cfa7fd18b7a386b500e4134d7cb71736985))
+
+
+
 # [0.5.0](https://github.com/mrl5/vulner/compare/v0.4.0...v0.5.0) (2022-03-18)
 
 
