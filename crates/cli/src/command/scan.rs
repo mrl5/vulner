@@ -6,7 +6,6 @@
  */
 use crate::conf::ApiKeys;
 use crate::utils::{get_feed_path, get_memory_size};
-use chrono::{Timelike, Utc};
 use cpe_tag::package::Package;
 use cpe_tag::query_builder::get_regex_pattern;
 use cpe_tag::searchers::{contains_cpe_json_key, match_cpes, scrap_cpe};
@@ -24,6 +23,7 @@ use std::fs::{create_dir_all, read_dir, set_permissions, File, OpenOptions};
 use std::io::{self, BufRead, Write};
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
+use time::OffsetDateTime;
 
 pub async fn execute(
     feed_dir: PathBuf,
@@ -33,7 +33,7 @@ pub async fn execute(
     api_keys: ApiKeys,
 ) -> Result<(), Box<dyn Error>> {
     // todo: progress bar
-    let now = Utc::now();
+    let now = OffsetDateTime::now_utc();
     let [date, time] = [
         now.date().to_string(),
         format!("{:02}:{:02}:{:02}Z", now.hour(), now.minute(), now.second()),
