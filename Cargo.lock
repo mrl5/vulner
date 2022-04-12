@@ -168,7 +168,7 @@ dependencies = [
 
 [[package]]
 name = "cli"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "atty",
  "confy",
@@ -233,7 +233,7 @@ checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 
 [[package]]
 name = "cpe-tag"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "grep-matcher",
  "grep-regex",
@@ -1465,7 +1465,7 @@ checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 
 [[package]]
 name = "security-advisories"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "futures-core",
  "futures-util",
