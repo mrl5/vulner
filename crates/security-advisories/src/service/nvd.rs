@@ -9,6 +9,7 @@ use crate::cve_summary::CveSummary;
 use crate::utils::get_progress_bar;
 use futures_util::StreamExt;
 use reqwest::Client;
+use secrecy::{ExposeSecret, Secret};
 use serde_json::Value;
 use std::cmp::min;
 use std::error::Error;
@@ -27,14 +28,14 @@ const CPE_FEED_PATH: &str = "feeds/json/cpematch/1.0";
 pub async fn fetch_cves_by_cpe(
     client: &Client,
     cpe: &str,
-    nvd_api_key: Option<String>,
+    nvd_api_key: Option<Secret<String>>,
 ) -> Result<Value, Box<dyn Error>> {
     let cve_query_path = "cves/1.0";
     let cpe_query = "cpeMatchString";
     let mut url = format!("{}/{}?{}={}", API_URL, cve_query_path, cpe_query, cpe);
 
     if let Some(api_key) = nvd_api_key {
-        url = format!("{}&apiKey={}", url, api_key);
+        url = format!("{}&apiKey={}", url, api_key.expose_secret());
     }
 
     let mut headers = reqwest::header::HeaderMap::new();
