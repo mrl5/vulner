@@ -1,3 +1,12 @@
+## [0.6.1](https://github.com/mrl5/vulner/compare/v0.6.0...v0.6.1) (2022-06-17)
+
+
+### Bug Fixes
+
+* **cli:** treat API key as a secret ([0b08d3e](https://github.com/mrl5/vulner/commit/0b08d3ed19f97992c883ead8d532cd083d861d99))
+
+
+
 # [0.6.0](https://github.com/mrl5/vulner/compare/v0.5.0...v0.6.0) (2022-04-12)
 
 
