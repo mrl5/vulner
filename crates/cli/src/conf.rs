@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use secrecy::Secret;
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::path::{Path, PathBuf};
@@ -20,7 +21,7 @@ pub struct VulnerConfig {
 #[derive(Serialize, Deserialize, Debug, StructOpt)]
 pub struct ApiKeys {
     #[structopt(env = "NVD_API_KEY")]
-    pub nvd_api_key: Option<String>,
+    nvd_api_key: Option<String>,
 }
 
 impl std::default::Default for VulnerConfig {
@@ -45,16 +46,16 @@ impl std::default::Default for ApiKeys {
 }
 
 impl security_advisories::service::ApiKeys for ApiKeys {
-    fn get_nvd_api_key(&self) -> Option<String> {
+    fn get_nvd_api_key(&self) -> Option<Secret<String>> {
         if let Ok(nvd_api_key) = env::var("NVD_API_KEY") {
             if !nvd_api_key.is_empty() {
-                return Some(nvd_api_key);
+                return Some(Secret::new(nvd_api_key));
             }
         }
 
         if let Some(nvd_api_key) = &self.nvd_api_key {
             if !nvd_api_key.is_empty() {
-                return Some(nvd_api_key.to_owned());
+                return Some(Secret::new(nvd_api_key.to_owned()));
             }
         }
 

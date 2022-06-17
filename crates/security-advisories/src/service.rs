@@ -7,6 +7,7 @@
 
 use crate::cve_summary::CveSummary;
 use reqwest::Client;
+use secrecy::Secret;
 use serde_json::Value;
 use std::error::Error;
 use std::path::Path;
@@ -18,7 +19,7 @@ pub const CPE_MATCH_FEED_GZ: &str = nvd::CPE_MATCH_FEED_GZ;
 pub const CPE_KEYWORD_IN_FEED_LINE: &str = nvd::CPE_KEYWORD_IN_FEED_LINE;
 
 pub trait ApiKeys {
-    fn get_nvd_api_key(&self) -> Option<String>;
+    fn get_nvd_api_key(&self) -> Option<Secret<String>>;
 }
 
 pub async fn fetch_cves_by_cpe(
