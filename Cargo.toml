@@ -8,3 +8,6 @@ members = [
 
 [profile.release]
 strip = "symbols"
+opt-level = "z"
+lto = true
+codegen-units = 1
