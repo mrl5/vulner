@@ -34,21 +34,19 @@ Notice how easy is to list all [CVE]s for given [CPE]. Using [CPE]s allows you
 to have reliable vulnerability tracker.
 
 
-## Howto build
-```bash
-$ git submodule update --init
-$ cargo build --release && cargo install --path crates/cli/
-```
-or you can use `make`
+## Howto build and install
+You can find ebuild in [ebuilds/](./ebuilds) (it's also available in [funtoo
+security-kit](https://github.com/funtoo/security-kit/tree/1.4-release/app-admin/vulner))
+...
+
+... or you can use `make`
 ```bash
 $ make install
 ```
-### Reminder
-be sure to either add `~/.cargo/bin` to your PATH to be able to run the installed
-binaries or to symlink `~/.cargo/bin/vulner` to some place covered by PATH
 
 
 ## Howto run
+
 ```bash
 $ ./scripts/check-runtime-deps.sh
 $ vulner --help
