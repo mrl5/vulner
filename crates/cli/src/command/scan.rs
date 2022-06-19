@@ -217,7 +217,7 @@ async fn handle_cves(
                 }
             }
             Err(e) => {
-                log::error!("{}", e);
+                log::error!("{category}/{pkg_name} ({cpe}): {e}");
             }
         };
 
