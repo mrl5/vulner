@@ -217,7 +217,7 @@ async fn handle_cves(
                 }
             }
             Err(e) => {
-                log::error!("{category}/{pkg_name} ({cpe}): {e}");
+                log::error!("{category}/{pkg_name}: {e}");
             }
         };
 
@@ -231,7 +231,11 @@ async fn handle_cves(
         }
     }
 
-    write_report(cwd, pkg_name, &cves)
+    if !cves.is_empty() {
+        write_report(cwd, pkg_name, &cves)
+    } else {
+        Ok(())
+    }
 }
 
 fn write_report(

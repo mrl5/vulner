@@ -8,7 +8,7 @@
 use crate::cve_summary::CveSummary;
 use crate::utils::get_progress_bar;
 use futures_util::StreamExt;
-use reqwest::Client;
+use reqwest::{Client, StatusCode};
 use secrecy::{ExposeSecret, Secret};
 use serde_json::Value;
 use std::cmp::min;
@@ -42,8 +42,25 @@ pub async fn fetch_cves_by_cpe(
     headers.insert(reqwest::header::ACCEPT, "application/json".parse()?);
     let res = client.get(&url).headers(headers).send().await?;
 
-    let json: Value = res.json().await?;
-    Ok(json)
+    match res.error_for_status() {
+        Ok(r) => {
+            let json: Value = r.json().await?;
+            Ok(json)
+        }
+        Err(err) => {
+            if let Some(status) = err.status() {
+                if status == StatusCode::FORBIDDEN {
+                    log::error!(
+                        "{} - {}: {}",
+                        status,
+                        "consider using NVD API key",
+                        "https://nvd.nist.gov/developers/request-an-api-key"
+                    );
+                }
+            }
+            Err(Box::new(err))
+        }
+    }
 }
 
 pub fn get_cves_summary(
