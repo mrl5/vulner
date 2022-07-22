@@ -9,7 +9,7 @@ main() {
 exit_on_invalid_commit_msg() {
     cat "$1" |
         grep -v -e '^#' |
-            npm run lint:commit
+            yarn run lint:commit
 }
 
 main "$1"
