@@ -9,7 +9,7 @@ use crate::conf::ApiKeys;
 use cpe_tag::validators::validate_cpe_batch;
 use security_advisories::http::get_client;
 use security_advisories::service::{
-    fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary,
+    fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary, throw_on_invalid_api_key,
 };
 use serde_json::from_str;
 use serde_json::Value;
@@ -44,7 +44,7 @@ pub async fn execute(
                     } else {
                         None
                     },
-                );
+                )?;
             }
             None => continue,
         }
@@ -53,12 +53,24 @@ pub async fn execute(
     Ok(())
 }
 
-fn print_cves(cves: Value, show_summary: bool, known_exploited_cves: Option<&[String]>) {
+fn print_cves(
+    cves: Value,
+    show_summary: bool,
+    known_exploited_cves: Option<&[String]>,
+) -> Result<(), Box<dyn Error>> {
     if show_summary {
-        for cve in get_cves_summary(&cves, known_exploited_cves) {
-            println!("{}", cve);
+        match get_cves_summary(&cves, known_exploited_cves) {
+            Ok(summary) => {
+                for cve in summary {
+                    println!("{}", cve);
+                }
+                Ok(())
+            }
+            Err(e) => Err(e),
         }
     } else {
+        throw_on_invalid_api_key(&cves)?;
         println!("{}", cves);
+        Ok(())
     }
 }

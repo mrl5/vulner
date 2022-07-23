@@ -8,7 +8,7 @@
 use crate::cve_summary::CveSummary;
 use crate::utils::get_progress_bar;
 use futures_util::StreamExt;
-use reqwest::Client;
+use reqwest::{Client, StatusCode};
 use secrecy::{ExposeSecret, Secret};
 use serde_json::Value;
 use std::cmp::min;
@@ -42,14 +42,31 @@ pub async fn fetch_cves_by_cpe(
     headers.insert(reqwest::header::ACCEPT, "application/json".parse()?);
     let res = client.get(&url).headers(headers).send().await?;
 
-    let json: Value = res.json().await?;
-    Ok(json)
+    match res.error_for_status() {
+        Ok(r) => {
+            let json: Value = r.json().await?;
+            Ok(json)
+        }
+        Err(err) => {
+            if let Some(status) = err.status() {
+                if status == StatusCode::FORBIDDEN {
+                    log::error!(
+                        "{} - {}: {}",
+                        status,
+                        "consider using NVD API key",
+                        "https://nvd.nist.gov/developers/request-an-api-key"
+                    );
+                }
+            }
+            Err(Box::new(err))
+        }
+    }
 }
 
 pub fn get_cves_summary(
     full_cve_resp: &Value,
     known_exploitable_cves: Option<&[String]>,
-) -> Vec<CveSummary> {
+) -> Result<Vec<CveSummary>, Box<dyn Error>> {
     let mut summary_items = vec![];
 
     if let Some(resp_items) = full_cve_resp["result"]["CVE_Items"].as_array() {
@@ -61,7 +78,12 @@ pub fn get_cves_summary(
         }
     }
 
-    summary_items
+    Ok(summary_items)
+}
+
+pub fn is_api_key_invalid(nvd_response: &Value) -> bool {
+    log::debug!("{}", nvd_response);
+    nvd_response["error"].as_str() == Some("Invalid apiKey")
 }
 
 pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Error>> {
@@ -196,5 +218,13 @@ mod tests {
 
         let summary = get_cve_summary(&unlisted_cve, Some(&known_exploitable_cves)).unwrap();
         assert_eq!(summary.is_known_exploited_vuln, Some(false));
+    }
+
+    #[test]
+    fn it_should_recognize_invalid_api_key() {
+        let cve = from_str(r#"{"CVE_data_meta":{"ASSIGNER":"cve@gitlab.com","ID":"CVE-2021-22204"},"data_format":"MITRE","data_type":"CVE","data_version":"4.0","description":{"description_data":[{"lang":"en","value":"Improper neutralization of user data in the DjVu file format in ExifTool versions 7.44 and up allows arbitrary code execution when parsing the malicious image"}]},"problemtype":{"problemtype_data":[{"description":[{"lang":"en","value":"CWE-74"}]}]},"references":{"reference_data":[]}}"#).unwrap();
+        let invalid_api_key_resp = from_str(r#"{"loggedIn":true,"authorized":true,"error":"Invalid apiKey","message":"Invalid apiKey"}"#).unwrap();
+        assert!(!is_api_key_invalid(&cve));
+        assert!(is_api_key_invalid(&invalid_api_key_resp));
     }
 }
