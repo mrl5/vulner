@@ -10,6 +10,7 @@ use reqwest::Client;
 use secrecy::Secret;
 use serde_json::Value;
 use std::error::Error;
+use std::io::{Error as IOError, ErrorKind};
 use std::path::Path;
 mod cisa;
 mod nvd;
@@ -39,8 +40,19 @@ pub async fn fetch_feed_checksum(client: &Client) -> Result<String, Box<dyn Erro
 pub fn get_cves_summary(
     full_cve_resp: &Value,
     known_exploitable_cves: Option<&[String]>,
-) -> Vec<CveSummary> {
+) -> Result<Vec<CveSummary>, Box<dyn Error>> {
+    throw_on_invalid_api_key(full_cve_resp)?;
     nvd::get_cves_summary(full_cve_resp, known_exploitable_cves)
+}
+
+pub fn throw_on_invalid_api_key(resp: &Value) -> Result<(), Box<dyn Error>> {
+    if nvd::is_api_key_invalid(resp) {
+        return Err(Box::new(IOError::new(
+            ErrorKind::InvalidInput,
+            "Invalid NVD API key",
+        )));
+    }
+    Ok(())
 }
 
 pub async fn download_cpe_match_feed(

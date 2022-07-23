@@ -211,11 +211,16 @@ async fn handle_cves(
 
     for cpe in matches {
         match fetch_cves_by_cpe(client, cpe, api_keys).await {
-            Ok(res) => {
-                for cve in get_cves_summary(&res, Some(known_exploited_cves)) {
-                    cves.insert(cve);
+            Ok(res) => match get_cves_summary(&res, Some(known_exploited_cves)) {
+                Ok(summary) => {
+                    for cve in summary {
+                        cves.insert(cve);
+                    }
                 }
-            }
+                Err(e) => {
+                    return Err(e);
+                }
+            },
             Err(e) => {
                 log::error!("{category}/{pkg_name}: {e}");
             }
