@@ -17,6 +17,10 @@ use std::error::Error;
 use std::path::Path;
 
 pub fn grep(pattern: String, feed: &Path) -> Result<HashSet<String>, Box<dyn Error>> {
+    if pattern.is_empty() {
+        return Ok(HashSet::new());
+    }
+
     let matcher = RegexMatcher::new_line_matcher(&pattern)?;
     let mut matches: Vec<String> = vec![];
 
@@ -41,13 +45,7 @@ pub fn match_cpes<'a>(
     re_pattern: &str,
 ) -> HashMap<&'a Package, HashSet<String>> {
     let mut cpes = HashMap::new();
-    let re = Regex::new(re_pattern).unwrap();
-    let matches = feed
-        .iter()
-        .filter(|feed_entry| re.is_match(feed_entry))
-        .map(|x| x.to_string())
-        .collect();
-    cpes.insert(pkg, matches);
+    cpes.insert(pkg, get_matches(re_pattern, feed));
     cpes
 }
 
@@ -58,6 +56,18 @@ pub fn scrap_cpe(line: &str) -> String {
 
 pub fn contains_cpe_json_key(line: &str) -> bool {
     line.contains(CPE_KEYWORD_IN_FEED_LINE)
+}
+
+fn get_matches(re_pattern: &str, feed: &[Box<str>]) -> HashSet<String> {
+    if re_pattern.is_empty() {
+        return HashSet::new();
+    }
+
+    let re = Regex::new(re_pattern).unwrap();
+    feed.iter()
+        .filter(|feed_entry| re.is_match(feed_entry))
+        .map(|x| x.to_string())
+        .collect()
 }
 
 fn get_uniq_values(matches: Vec<String>) -> HashSet<String> {
@@ -75,6 +85,19 @@ mod tests {
             scrap_cpe(line),
             "cpe:2.3:a:xmlsoft:libxml2:2.9.10:*:*:*:*:*:*:*"
         );
+    }
+    #[test]
+    fn it_should_ignore_empty_string_as_a_pattern() {
+        let test_matches = [
+            Box::from(
+                "      \"cpe23Uri\" : \"cpe:2.3:a:busybox:busybox:1.29.3:*:*:*:*:*:*:*\"\r\n",
+            ),
+            Box::from(
+                "      \"cpe23Uri\" : \"cpe:2.3:a:xmlsoft:libxml2:2.9.10:*:*:*:*:*:*:*\"\r\n",
+            ),
+        ];
+
+        assert_eq!(get_matches("", &test_matches).len(), 0);
     }
 
     #[test]
