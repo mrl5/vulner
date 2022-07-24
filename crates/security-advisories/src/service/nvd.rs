@@ -58,7 +58,7 @@ pub async fn fetch_cves_by_cpe(
                     );
                 }
             }
-            Err(Box::new(err))
+            Err(Box::new(err.without_url()))
         }
     }
 }
