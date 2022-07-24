@@ -1,3 +1,15 @@
+## [0.6.2](https://github.com/mrl5/vulner/compare/v0.6.1...v0.6.2) (2022-07-24)
+
+
+### Bug Fixes
+
+* **cpe-tag:** errors when package version "0" or "9999" [[#54](https://github.com/mrl5/vulner/issues/54)] ([cff2ed2](https://github.com/mrl5/vulner/commit/cff2ed2caa89753641690c3a084e9805ea5b8ba2))
+* **scan:** abort on invalid NVD API key ([291f60e](https://github.com/mrl5/vulner/commit/291f60e55b58f4d2584f4f9064019dfd608cf956))
+* **scan:** don't leak apiKey to ERROR log [[#55](https://github.com/mrl5/vulner/issues/55)] ([31c2f76](https://github.com/mrl5/vulner/commit/31c2f763327de8efd6e9d3565ca15ca4eef4b607))
+* **scan:** improve error logs related to NVD API throttling ([d76aa2d](https://github.com/mrl5/vulner/commit/d76aa2dc1ca51fab87db4f7765a037ff372daf46))
+
+
+
 ## [0.6.1](https://github.com/mrl5/vulner/compare/v0.6.0...v0.6.1) (2022-06-17)
 
 
