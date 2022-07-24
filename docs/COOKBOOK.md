@@ -1,6 +1,6 @@
 # `vulner` cookbook
 
-```bash
+```console
 vulner --help
 ```
 
@@ -14,7 +14,7 @@ vulner --help
 
 
 ## Scanning Funtoo Linux system for CVEs
-```bash
+```console
 export VULNER_FEED_DIR=$HOME/vulner/feeds/json
 export VULNER_OUT_DIR=$HOME/vulner/scan-results
 
@@ -22,8 +22,8 @@ vulner sync
 RUST_LOG=warn vulner scan
 ```
 Results in:
-```bash
-$ tree ~/vulner/scan-results/
+```console
+tree ~/vulner/scan-results/
 ```
 ```
 └── 2022-04-05UTC
@@ -35,8 +35,8 @@ $ tree ~/vulner/scan-results/
             └── xterm-346.txt
 ```
 Report for particular package:
-```bash
-$ cat ~/vulner/scan-results/2022-01-30UTC/*/app-emulation/*containerd*.txt | jq '.'
+```console
+cat ~/vulner/scan-results/2022-01-30UTC/*/app-emulation/*containerd*.txt | jq '.'
 ```
 ```
 {
@@ -58,7 +58,7 @@ $ cat ~/vulner/scan-results/2022-01-30UTC/*/app-emulation/*containerd*.txt | jq 
 
 
 ## Scanning packages in Funtoo Linux kit for CVEs
-```bash
+```console
 kit="gnome-kit"
 
 export VULNER_FEED_DIR=$HOME/vulner/feeds/json
@@ -70,7 +70,7 @@ vulner scan --pkg-dir /var/git/meta-repo/kits/${kit}/
 
 
 ## Scanning Funtoo Linux meta-repo for CVEs
-```bash
+```console
 export VULNER_FEED_DIR=$HOME/vulner/feeds/json
 export VULNER_OUT_DIR=$HOME/vulner/${kit}-scan-results
 
@@ -82,7 +82,7 @@ vulner scan --pkg-dir /var/git/meta-repo/ --recursive
 ## Listing CVEs for given packages
 
 ### Example 1
-```bash
+```console
 vulner sync
 vulner cpe '[{"name":"lua", "version":"5.3.5-r1"}]' | vulner cve --summary
 ```
@@ -91,7 +91,7 @@ vulner cpe '[{"name":"lua", "version":"5.3.5-r1"}]' | vulner cve --summary
 **NOTE** this example requires third party package to be present on your OS -
 [jq](https://stedolan.github.io/jq/) (for pretty output)
 
-```bash
+```console
 RUST_LOG=debug vulner sync && echo '
 [
   {
@@ -122,12 +122,12 @@ CPE match feed is up to date, available in "/tmp/vulner/feeds/json/nvdcpematch-1
 
 
 ## Printing known exploited vulnerabilities catalog
-```bash
+```console
 vulner kev | jq '.' > known-exploited-vulnerabilities.json
 ```
 Results in:
-```bash
-$ head known-exploited-vulnerabilities.json
+```console
+head known-exploited-vulnerabilities.json
 
 {
   "catalogVersion": "2022.02.25",
@@ -150,10 +150,13 @@ command execution via a crafted POST request to various admin endpoints.",
 
 
 ## Using API keys
-```bash
+You can get one at https://nvd.nist.gov/developers/request-an-api-key
+
+then:
+```console
 export NVD_API_KEY=your-api-key
 ```
 or change this line in local config:
-```bash
+```console
 grep -n nvd_api_key ~/.config/vulner/vulner.toml
 ```
