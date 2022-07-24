@@ -12,6 +12,13 @@ Discover CVEs for software.
 - **Use case 4)** as a [Funtoo Linux] maintainer I want to scan all packages in kit for CVEs
 - **Use case 5)** as a [Funtoo Linux] maintainer I want to scan all meta-repo for CVEs
 
+
+## API keys
+
+For better user experience consider using API keys:
+* [NVD API Key](https://nvd.nist.gov/developers/request-an-api-key)
+
+
 ## DISCLAIMER
 
 Running `vulner scan` doesn't guarantee that all CVEs present on your system will be
@@ -40,18 +47,18 @@ security-kit](https://github.com/funtoo/security-kit/tree/1.4-release/app-admin/
 ...
 
 ... or you can use `make`
-```bash
-$ make install
+```console
+make install
 ```
 
 
 ## Howto run
 
-```bash
-$ ./scripts/check-runtime-deps.sh
-$ vulner --help
-$ RUST_LOG=debug vulner sync
-$ RUST_LOG=info vulner scan -o ~/vulner/scan-results
+```console
+./scripts/check-runtime-deps.sh
+vulner --help
+RUST_LOG=debug vulner sync
+RUST_LOG=info vulner scan -o ~/vulner/scan-results
 ```
 
 

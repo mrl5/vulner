@@ -42,7 +42,7 @@ If you need more examples check commits on master branch.
 
 
 ## DEV CLI
-```bash
+```console
 make init-dev
 make lint test
 ```
