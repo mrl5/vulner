@@ -18,7 +18,7 @@ block-buffer-0.10.2
 bstr-0.2.17
 bumpalo-3.10.0
 bytecount-0.6.3
-bytes-1.1.0
+bytes-1.2.0
 cc-1.0.73
 cfg-if-0.1.10
 cfg-if-1.0.0
@@ -32,12 +32,12 @@ crc32fast-1.3.2
 crossbeam-channel-0.5.5
 crossbeam-deque-0.8.1
 crossbeam-epoch-0.9.9
-crossbeam-utils-0.8.9
-crypto-common-0.1.3
+crossbeam-utils-0.8.10
+crypto-common-0.1.6
 digest-0.10.3
 directories-2.0.2
 dirs-sys-0.3.7
-either-1.6.1
+either-1.7.0
 encode_unicode-0.3.6
 encoding_rs-0.8.31
 encoding_rs_io-0.1.7
@@ -60,10 +60,10 @@ futures-util-0.3.21
 generic-array-0.14.5
 getrandom-0.2.7
 grep-matcher-0.1.5
-grep-regex-0.1.9
-grep-searcher-0.1.8
+grep-regex-0.1.10
+grep-searcher-0.1.10
 h2-0.3.13
-hashbrown-0.12.1
+hashbrown-0.12.3
 heck-0.3.3
 hermit-abi-0.1.19
 http-0.2.8
@@ -71,10 +71,10 @@ http-body-0.4.5
 httparse-1.7.1
 httpdate-1.0.2
 humantime-2.1.0
-hyper-0.14.19
+hyper-0.14.20
 hyper-tls-0.5.0
 idna-0.2.3
-indexmap-1.9.0
+indexmap-1.9.1
 indicatif-0.16.2
 indoc-0.3.6
 indoc-impl-0.3.6
@@ -90,12 +90,12 @@ lock_api-0.4.7
 log-0.4.17
 matches-0.1.9
 memchr-2.5.0
-memmap2-0.3.1
+memmap2-0.5.5
 memoffset-0.6.5
 mime-0.3.16
 minimal-lexical-0.2.1
 miniz_oxide-0.5.3
-mio-0.8.3
+mio-0.8.4
 native-tls-0.2.10
 nom-7.1.1
 num-0.2.1
@@ -109,11 +109,11 @@ num-traits-0.2.15
 num_cpus-1.13.1
 num_threads-0.1.6
 number_prefix-0.4.0
-once_cell-1.12.0
-openssl-0.10.40
+once_cell-1.13.0
+openssl-0.10.41
 openssl-macros-0.1.0
 openssl-probe-0.1.5
-openssl-sys-0.9.74
+openssl-sys-0.9.75
 parking_lot-0.11.2
 parking_lot-0.12.1
 parking_lot_core-0.8.5
@@ -127,20 +127,20 @@ pkg-config-0.3.25
 proc-macro-error-1.0.4
 proc-macro-error-attr-1.0.4
 proc-macro-hack-0.5.19
-proc-macro2-1.0.39
+proc-macro2-1.0.40
 pyo3-0.15.2
 pyo3-build-config-0.15.2
 pyo3-macros-0.15.2
 pyo3-macros-backend-0.15.2
 pythonize-0.15.0
-quote-1.0.18
+quote-1.0.20
 rayon-1.5.3
 rayon-core-1.9.3
-redox_syscall-0.2.13
+redox_syscall-0.2.15
 redox_users-0.4.3
-regex-1.5.6
+regex-1.6.0
 regex-automata-0.1.10
-regex-syntax-0.6.26
+regex-syntax-0.6.27
 remove_dir_all-0.5.3
 reqwest-0.11.11
 ryu-1.0.10
@@ -149,19 +149,19 @@ scopeguard-1.1.0
 secrecy-0.8.0
 security-framework-2.6.1
 security-framework-sys-2.6.1
-serde-1.0.137
-serde_derive-1.0.137
-serde_json-1.0.81
+serde-1.0.140
+serde_derive-1.0.140
+serde_json-1.0.82
 serde_urlencoded-0.7.1
 sha2-0.10.2
 signal-hook-registry-1.4.0
-slab-0.4.6
-smallvec-1.8.0
+slab-0.4.7
+smallvec-1.9.0
 socket2-0.4.4
 strsim-0.8.0
 structopt-0.3.26
 structopt-derive-0.4.18
-syn-1.0.96
+syn-1.0.98
 tempfile-3.3.0
 termcolor-1.1.3
 terminal_size-0.1.17
@@ -169,24 +169,24 @@ textwrap-0.11.0
 thiserror-1.0.31
 thiserror-impl-1.0.31
 thread_local-1.1.4
-time-0.3.9
+time-0.3.11
 time-macros-0.2.4
 tinyvec-1.6.0
 tinyvec_macros-0.1.0
-tokio-1.19.2
+tokio-1.20.0
 tokio-macros-1.8.0
 tokio-native-tls-0.3.0
 tokio-stream-0.1.9
 tokio-util-0.7.3
 toml-0.5.9
-tower-service-0.3.1
+tower-service-0.3.2
 tracing-0.1.35
-tracing-core-0.1.27
+tracing-core-0.1.28
 try-lock-0.2.3
 typenum-1.15.0
 unicode-bidi-0.3.8
-unicode-ident-1.0.1
-unicode-normalization-0.1.19
+unicode-ident-1.0.2
+unicode-normalization-0.1.21
 unicode-segmentation-1.9.0
 unicode-width-0.1.9
 unindent-0.1.9
@@ -215,14 +215,14 @@ windows_i686_msvc-0.36.1
 windows_x86_64_gnu-0.36.1
 windows_x86_64_msvc-0.36.1
 winreg-0.10.1
-zeroize-1.5.5
+zeroize-1.5.7
 "
 
 inherit cargo
 
 DESCRIPTION="Discover CVEs for packages installed by the portage"
 HOMEPAGE="https://github.com/mrl5/vulner"
-SRC_URI="https://github.com/mrl5/vulner/releases/download/v0.6.1/vulner-v0.6.1.tar.gz -> vulner-0.6.1.tar.gz
+SRC_URI="https://github.com/mrl5/vulner/releases/download/v0.6.2/vulner-v0.6.2.tar.gz -> vulner-0.6.2.tar.gz
 	$(cargo_crate_uris ${CRATES})"
 
 LICENSE="MPL-2.0"
