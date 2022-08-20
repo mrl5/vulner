@@ -1,8 +1,11 @@
 # vulner
+![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/mrl5/vulner/latest)
+![GitHub last commit](https://img.shields.io/github/last-commit/mrl5/vulner)
+[![cargo security audit](https://github.com/mrl5/vulner/actions/workflows/cargo-audit.yaml/badge.svg)](https://github.com/mrl5/vulner/actions/workflows/cargo-audit.yaml)
 [![build status](https://github.com/mrl5/vulner/actions/workflows/build.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/build.yaml)
 [![tests status](https://github.com/mrl5/vulner/actions/workflows/tests.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/tests.yaml)
 [![linter status](https://github.com/mrl5/vulner/actions/workflows/linter.yaml/badge.svg?event=push)](https://github.com/mrl5/vulner/actions/workflows/linter.yaml)
-[![cargo security audit](https://github.com/mrl5/vulner/actions/workflows/cargo-audit.yaml/badge.svg)](https://github.com/mrl5/vulner/actions/workflows/cargo-audit.yaml)
+![GitHub license](https://img.shields.io/github/license/mrl5/vulner)
 
 Discover CVEs for software.
 
@@ -17,6 +20,8 @@ Discover CVEs for software.
 
 For better user experience consider using API keys:
 * [NVD API Key](https://nvd.nist.gov/developers/request-an-api-key)
+
+More details in [COOKBOOK.md](docs/COOKBOOK.md#using-api-keys)
 
 
 ## DISCLAIMER
