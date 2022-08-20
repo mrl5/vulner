@@ -14,7 +14,7 @@ independent = true
 security-advisories = { path = "../security-advisories" }
 pyo3 = { version = "0.15.1", features = ["auto-initialize"] }
 log = "0.4.14"
-jsonschema = "0.14.0"
+jsonschema = { version = "0.14.0", default-features = false }
 serde_json = "1.0.78"
 serde = "1.0.136"
 pythonize = "0.15.0"
