@@ -13,6 +13,7 @@ name = "vulner"
 path = "src/main.rs"
 
 [dependencies]
+package-model = { path = "../package-model" }
 cpe-tag = { path = "../cpe-tag" }
 os-adapter = { path = "../os-adapter" }
 security-advisories = { path = "../security-advisories" }

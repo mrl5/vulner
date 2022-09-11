@@ -5,11 +5,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-use crate::package::Package;
 use grep_matcher::Matcher;
 use grep_regex::RegexMatcher;
 use grep_searcher::sinks::UTF8;
 use grep_searcher::Searcher;
+use package_model::package::Package;
 use regex::Regex;
 use security_advisories::service::CPE_KEYWORD_IN_FEED_LINE;
 use std::collections::{HashMap, HashSet};

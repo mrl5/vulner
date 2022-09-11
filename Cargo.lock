@@ -177,6 +177,7 @@ dependencies = [
  "log",
  "once_cell",
  "os-adapter",
+ "package-model",
  "rayon",
  "regex",
  "reqwest",
@@ -240,13 +241,12 @@ dependencies = [
  "grep-regex",
  "grep-searcher",
  "jsonschema",
- "lazy_static",
  "log",
+ "package-model",
  "pyo3",
  "pythonize",
  "regex",
  "security-advisories",
- "serde",
  "serde_json",
 ]
 
@@ -1105,8 +1105,17 @@ dependencies = [
 name = "os-adapter"
 version = "0.4.0"
 dependencies = [
- "cpe-tag",
  "log",
+ "package-model",
+]
+
+[[package]]
+name = "package-model"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
+ "regex",
+ "serde",
 ]
 
 [[package]]

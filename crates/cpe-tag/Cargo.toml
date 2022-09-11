@@ -11,15 +11,14 @@ keywords = ["cpe", "nvd", "linux"]
 independent = true
 
 [dependencies]
+package-model = { path = "../package-model" }
 security-advisories = { path = "../security-advisories" }
 pyo3 = { version = "0.15.1", features = ["auto-initialize"] }
 log = "0.4.14"
 jsonschema = { version = "0.14.0", default-features = false }
 serde_json = "1.0.78"
-serde = "1.0.136"
-pythonize = "0.15.0"
 regex = "1.5.5"
-lazy_static = "1.4.0"
+pythonize = "0.15.0"
 grep-matcher = "0.1.5"
 grep-regex = "0.1.9"
 grep-searcher = "0.1.8"

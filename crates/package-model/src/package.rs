@@ -10,10 +10,11 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::string::ToString;
 
+lazy_static! {
+    static ref RE: Regex = Regex::new("^(.+)-([0-9]+.*)$").unwrap();
+}
+
 pub fn convert_to_pkg(raw_pkg: &str) -> Option<Package> {
-    lazy_static! {
-        static ref RE: Regex = Regex::new("^(.+)-([0-9]+.*)$").unwrap();
-    }
     let caps = RE.captures(raw_pkg)?;
 
     let name = caps.get(1);

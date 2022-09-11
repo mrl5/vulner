@@ -6,10 +6,10 @@
  */
 use crate::conf::ApiKeys;
 use crate::utils::{get_feed_path, get_memory_size};
-use cpe_tag::package::Package;
 use cpe_tag::query_builder::get_regex_pattern;
 use cpe_tag::searchers::{contains_cpe_json_key, match_cpes, scrap_cpe};
 use os_adapter::adapter::{get_adapter, OsAdapter};
+use package_model::package::Package;
 use rayon::prelude::*;
 use reqwest::Client;
 use security_advisories::cve_summary::CveSummary;
@@ -52,7 +52,7 @@ pub async fn execute(
 
     log::debug!("getting os adapter ...");
     if !recursive {
-        let os = get_adapter(pkg_dir)?;
+        let os = get_adapter(pkg_dir, Some(true))?;
         scan(
             &*os,
             &out_dir,
@@ -63,7 +63,7 @@ pub async fn execute(
         )
         .await?;
     } else {
-        let mut os = get_adapter(None)?;
+        let mut os = get_adapter(None, Some(true))?;
         let kits_dir = &pkg_dir.unwrap().join("kits");
         for kit in read_dir(&kits_dir)? {
             os.set_pkg_dir(kit?.path());
