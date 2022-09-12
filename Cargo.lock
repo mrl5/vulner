@@ -1469,6 +1469,7 @@ dependencies = [
  "futures-util",
  "indicatif",
  "log",
+ "os-adapter",
  "reqwest",
  "secrecy",
  "serde",

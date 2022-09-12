@@ -11,6 +11,7 @@ keywords = ["cpe", "cve", "cna", "security", "advisory"]
 independent = true
 
 [dependencies]
+os-adapter = { path = "../os-adapter" }
 futures-core = "0.3.19"
 futures-util = "0.3.19"
 indicatif = "0.16.2"

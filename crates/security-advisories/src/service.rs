@@ -6,6 +6,8 @@
  */
 
 use crate::cve_summary::CveSummary;
+use crate::tracker_summary::DistroTrackerSummary;
+use os_adapter::adapter::{LinuxDistro, Os, OsAdapter, OsFlavor};
 use reqwest::Client;
 use secrecy::Secret;
 use serde_json::Value;
@@ -13,6 +15,7 @@ use std::error::Error;
 use std::io::{Error as IOError, ErrorKind};
 use std::path::Path;
 mod cisa;
+mod funtoo;
 mod nvd;
 
 pub const CPE_MATCH_FEED: &str = nvd::CPE_MATCH_FEED;
@@ -71,4 +74,18 @@ pub async fn fetch_known_exploited_vulns(client: &Client) -> Result<Value, Box<d
 pub async fn fetch_known_exploited_cves(client: &Client) -> Result<Vec<String>, Box<dyn Error>> {
     log::info!("fetching known exploited CVEs ...");
     cisa::fetch_known_exploited_cves(client).await
+}
+
+pub async fn get_distro_tracker_summary(
+    client: &Client,
+    os: Box<dyn OsAdapter>,
+) -> Result<Vec<DistroTrackerSummary>, Box<dyn Error>> {
+    if *os.get_os() != Os::GnuLinux {
+        return Err(Box::new(IOError::from(ErrorKind::Unsupported)));
+    }
+
+    match os.get_os_flavor() {
+        Some(OsFlavor::LinuxDistro(&LinuxDistro::Funtoo)) => funtoo::get_vuln_tracker(client).await,
+        _ => Err(Box::new(IOError::from(ErrorKind::Unsupported))),
+    }
 }

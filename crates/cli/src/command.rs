@@ -16,6 +16,7 @@ mod cve;
 mod known_exploited_vulns;
 mod scan;
 mod sync;
+mod tracker;
 
 pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
     let cfg: conf::VulnerConfig = load(crate::NAME).unwrap_or_default();
@@ -62,6 +63,8 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
         }
 
         Command::KnownExploitedVulns {} => known_exploited_vulns::execute().await,
+
+        Command::Tracker {} => tracker::execute().await,
     }
 }
 
@@ -129,6 +132,12 @@ pub enum Command {
         about = "Prints (K)nown (E)xploited (V)ulnerabilities catalog"
     )]
     KnownExploitedVulns {},
+
+    #[structopt(
+        name = "tracker",
+        about = "Prints contents of OS vulnerability tracker"
+    )]
+    Tracker {},
 }
 
 #[derive(Debug, StructOpt)]

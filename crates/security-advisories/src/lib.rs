@@ -8,4 +8,5 @@
 pub mod cve_summary;
 pub mod http;
 pub mod service;
+pub mod tracker_summary;
 mod utils;
