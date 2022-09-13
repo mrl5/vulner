@@ -74,7 +74,7 @@ RUST_LOG=info vulner scan -o ~/vulner/scan-results
 ## Why `vulner` needs python at runtime?
 
 Because of reasons described in
-[0001-runtime-python-dependencies.md](crates/cpe-tag/docs/adr/0001-runtime-python-dependencies.md)
+[0001-runtime-python-dependencies.md](docs/adr/0001-runtime-python-dependencies.md)
 ADR.
 
 
