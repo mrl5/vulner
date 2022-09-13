@@ -10,6 +10,7 @@ vulner --help
 - [Scanning Funtoo Linux meta-repo for CVEs](#scanning-funtoo-linux-meta-repo-for-cves)
 - [Listing CVEs for given packages](#listing-cves-for-given-packages)
 - [Printing known exploited vulnerabilities catalog](#printing-known-exploited-vulnerabilities-catalog)
+- [Printing OS security tracker](#printing-os-security-tracker)
 - [Using API keys](#using-api-keys)
 
 
@@ -146,6 +147,42 @@ command execution via a crafted POST request to various admin endpoints.",
       "vendorProject": "Accellion",
       "vulnerabilityName": "Accellion FTA OS Command Injection Vulnerability"
     },
+```
+
+
+## Printing OS security tracker
+```console
+vulner tracker | jq .
+```
+Results in:
+```json
+[
+  {
+    "id": "FL-10356",
+    "url": "https://bugs.funtoo.org/browse/FL-10356",
+    "summary": "app-misc/c_rehash-1.7-r1 (openssl related) - 2 critical vulns"
+  },
+  {
+    "id": "FL-10354",
+    "url": "https://bugs.funtoo.org/browse/FL-10354",
+    "summary": "[x86 32bit] dev-libs/openssl-1.1.1n - high severity vuln"
+  },
+  {
+    "id": "FL-10353",
+    "url": "https://bugs.funtoo.org/browse/FL-10353",
+    "summary": "app-emulation/qemu-6.2.0 - multiple vulnerabilities"
+  },
+  {
+    "id": "FL-10272",
+    "url": "https://bugs.funtoo.org/browse/FL-10272",
+    "summary": "dev-libs/libxml2 - Multiple vulns"
+  },
+  {
+    "id": "FL-10246",
+    "url": "https://bugs.funtoo.org/browse/FL-10246",
+    "summary": "sys-apps/util-linux-2.36.2 - CVE-2022-0563 , CVE-2021-37600 - Medium"
+  }
+]
 ```
 
 

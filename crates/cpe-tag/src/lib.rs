@@ -5,7 +5,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-pub mod package;
 pub mod query_builder;
 pub mod searchers;
 pub mod validators;

@@ -6,12 +6,14 @@
  */
 
 use super::portage::Portage;
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 pub struct Gentoo {
     os: super::Os,
     flavor: super::LinuxDistro,
     pkg_dir: PathBuf,
+    pkg_prefix_adapter: HashMap<&'static str, String>,
 }
 
 impl Gentoo {
@@ -20,6 +22,7 @@ impl Gentoo {
             os: super::Os::GnuLinux,
             flavor: super::LinuxDistro::Gentoo,
             pkg_dir: Path::new("/var/db/pkg/").to_path_buf(),
+            pkg_prefix_adapter: HashMap::from([]),
         }
     }
 }
@@ -43,5 +46,15 @@ impl Portage for Gentoo {
 
     fn set_pkg_dir(&mut self, pkg_dir: PathBuf) {
         self.pkg_dir = pkg_dir;
+    }
+
+    fn get_pkg_prefix_adapter(&self, category: &str) -> Option<&String> {
+        self.pkg_prefix_adapter.get(category)
+    }
+
+    fn set_pkg_adapter(&mut self, use_nvd_pkg_adapter: bool) {
+        if use_nvd_pkg_adapter {
+            self.pkg_prefix_adapter = HashMap::from([("dev-libs", "lib".to_owned())])
+        }
     }
 }

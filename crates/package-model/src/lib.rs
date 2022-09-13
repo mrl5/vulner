@@ -5,10 +5,4 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-use package_model::package::Package;
-use std::error::Error;
-mod py_query_builder;
-
-pub fn get_regex_pattern(packages: &[Package]) -> Result<String, Box<dyn Error>> {
-    py_query_builder::get_regex_pattern(packages)
-}
+pub mod package;

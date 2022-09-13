@@ -6,7 +6,7 @@
  */
 
 use crate::os_release::get_distro_id;
-use cpe_tag::package::Package;
+use package_model::package::Package;
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
@@ -26,11 +26,15 @@ pub trait OsInfo {
 pub trait OsPackages {
     fn get_all_catpkgs(&self) -> Result<HashMap<String, Vec<Package>>, Box<dyn Error>>;
     fn set_pkg_dir(&mut self, pkg_dir: PathBuf);
+    fn set_pkg_adapter(&mut self, use_nvd_pkg_adapter: bool);
 }
 
 pub trait OsAdapter: OsInfo + OsPackages {}
 
-pub fn get_adapter(pkg_dir: Option<PathBuf>) -> Result<Box<dyn OsAdapter>, Box<dyn Error>> {
+pub fn get_adapter(
+    pkg_dir: Option<PathBuf>,
+    use_nvd_pkg_adapter: Option<bool>,
+) -> Result<Box<dyn OsAdapter>, Box<dyn Error>> {
     let os = Os::from_str(env::consts::OS)?;
 
     if os == Os::GnuLinux {
@@ -40,6 +44,8 @@ pub fn get_adapter(pkg_dir: Option<PathBuf>) -> Result<Box<dyn OsAdapter>, Box<d
         if let Some(pkg_dir) = pkg_dir {
             adapter.set_pkg_dir(pkg_dir);
         }
+        adapter.set_pkg_adapter(use_nvd_pkg_adapter.unwrap_or(false));
+
         Ok(adapter)
     } else {
         // placeholder
@@ -52,12 +58,12 @@ pub enum Os {
     GnuLinux,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum OsFlavor<'a> {
     LinuxDistro(&'a LinuxDistro),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum LinuxDistro {
     Funtoo,
     Gentoo,

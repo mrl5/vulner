@@ -11,5 +11,5 @@ keywords = ["os", "adapter"]
 independent = true
 
 [dependencies]
-cpe-tag = { path = "../cpe-tag" }
+package-model = { path = "../package-model" }
 log = "0.4.14"

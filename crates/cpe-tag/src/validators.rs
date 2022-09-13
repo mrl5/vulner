@@ -5,8 +5,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-use crate::package::Package;
 use jsonschema::{Draft, JSONSchema};
+use package_model::package::Package;
 use serde_json::{from_str, from_value, Value};
 use std::error::Error;
 use std::io;

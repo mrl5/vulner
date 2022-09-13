@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-use cpe_tag::package::{convert_to_pkg, Package};
+use package_model::package::{convert_to_pkg, Package};
 use std::collections::HashMap;
 use std::error::Error;
 use std::fs::{read_dir, DirEntry};
@@ -14,6 +14,8 @@ use std::path::{Path, PathBuf};
 pub trait Portage {
     fn get_pkg_dir(&self) -> &Path;
     fn set_pkg_dir(&mut self, pkg_dir: PathBuf);
+    fn get_pkg_prefix_adapter(&self, category: &str) -> Option<&String>;
+    fn set_pkg_adapter(&mut self, use_nvd_pkg_adapter: bool);
 }
 
 // https://riptutorial.com/rust/example/22917/inheritance-with-traits
@@ -25,9 +27,11 @@ where
         self.set_pkg_dir(pkg_dir)
     }
 
+    fn set_pkg_adapter(&mut self, use_nvd_pkg_adapter: bool) {
+        self.set_pkg_adapter(use_nvd_pkg_adapter)
+    }
+
     fn get_all_catpkgs(&self) -> Result<HashMap<String, Vec<Package>>, Box<dyn Error>> {
-        let pkg_prefix_adapter: HashMap<&str, String> =
-            HashMap::from([("dev-libs", "lib".to_owned())]);
         let skipped_dirs = vec!["eclass", "licenses", "metadata", "profiles", "virtual"];
         let mut all_catpkgs = HashMap::new();
 
@@ -53,7 +57,7 @@ where
                     }
 
                     log::debug!("collecting packages in {} ...", ctgr);
-                    let pkgs = list_pkgs(cat_path, pkg_prefix_adapter.get(ctgr.as_str()))?;
+                    let pkgs = list_pkgs(cat_path, self.get_pkg_prefix_adapter(ctgr.as_str()))?;
                     all_catpkgs.insert(ctgr, pkgs);
                 }
                 Err(os_path) => {
