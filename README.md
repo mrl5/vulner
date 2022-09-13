@@ -16,6 +16,8 @@ Discover CVEs for software.
 - **Use case 5)** as a [Funtoo Linux] maintainer I want to scan all meta-repo for CVEs
 - **Use case 6)** as a [Funtoo Linux] user I want to list bug tracker security
   vulnerability tickets that are not fixed
+- **Use case 7)** as a [Funtoo Linux] user I want to know if there is already a
+  ticket for CVE detected by `vulner`
 
 
 ## API keys

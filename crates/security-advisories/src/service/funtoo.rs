@@ -18,7 +18,8 @@ const VULN_BUG_TYPE: &str = "10200";
 pub async fn get_vuln_tracker(
     client: &Client,
 ) -> Result<Vec<DistroTrackerSummary>, Box<dyn Error>> {
-    let resp = fetch_vuln_tracker(client).await?;
+    let query = format!("issuetype = {} AND statuscategory != Done", VULN_BUG_TYPE);
+    let resp = search_vuln_tracker(client, query).await?;
     let mut summary = vec![];
 
     if let Some(issues) = resp["issues"].as_array() {
@@ -38,8 +39,25 @@ pub async fn get_vuln_tracker(
     Ok(summary)
 }
 
-async fn fetch_vuln_tracker(client: &Client) -> Result<Value, Box<dyn Error>> {
-    let query = format!("issuetype = {} AND statuscategory != Done", VULN_BUG_TYPE);
+pub async fn get_tickets_by_cve(
+    client: &Client,
+    cve: String,
+) -> Result<Vec<String>, Box<dyn Error>> {
+    let query = format!("issuetype = {} AND text ~ {}", VULN_BUG_TYPE, cve);
+    let resp = search_vuln_tracker(client, query).await?;
+    let mut tickets = vec![];
+
+    if let Some(issues) = resp["issues"].as_array() {
+        for issue in issues {
+            let ticket = issue["key"].as_str().unwrap_or("");
+            tickets.push(ticket.to_owned());
+        }
+    }
+
+    Ok(tickets)
+}
+
+async fn search_vuln_tracker(client: &Client, query: String) -> Result<Value, Box<dyn Error>> {
     let url = format!(
         "{}/{}/search?fields=key,summary&jql={}",
         BUGS_URL, API_PATH, query

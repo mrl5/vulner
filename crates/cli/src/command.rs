@@ -51,6 +51,7 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
             pkg_dir,
             recursive,
             api_keys: _,
+            no_bugtracker,
         } => {
             scan::execute(
                 cpe_feed.feed_dir,
@@ -58,6 +59,7 @@ pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
                 pkg_dir,
                 recursive,
                 cfg.api_keys,
+                no_bugtracker,
             )
             .await
         }
@@ -125,6 +127,9 @@ pub enum Command {
 
         #[structopt(flatten)]
         api_keys: conf::ApiKeys,
+
+        #[structopt(short, long, help = "Don't query distro bugtracker")]
+        no_bugtracker: bool,
     },
 
     #[structopt(
