@@ -6,7 +6,7 @@
   "author": "mrl5",
   "scripts": {
     "prepare": "git config --local core.hooksPath .githooks || echo 'Could not set git hooks'",
-    "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
+    "version": "conventional-changelog -p angular -i ../CHANGELOG.md -s && git add ../CHANGELOG.md",
     "recommended-bump": "conventional-recommended-bump -p angular",
     "lint:commit": "commitlint"
   },

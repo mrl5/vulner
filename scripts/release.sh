@@ -15,7 +15,9 @@ main() {
     local remote=$(get_remote $REMOTE_URI)
     git checkout $MASTER_BRANCH
     git pull $remote $MASTER_BRANCH --tags
+    cd "$SCRIPT_DIR"
     yarn install --frozen-lockfile
+    cd "$TARGET_DIR"
     git checkout -b $(uuidgen --random)
     bump_version
     git_prep_push $remote
@@ -41,7 +43,9 @@ set_remote() {
 }
 
 get_recommended_bump() {
+    cd "$SCRIPT_DIR"
     yarn run -s recommended-bump
+    cd "$TARGET_DIR"
 }
 
 bump_version() {
@@ -52,7 +56,9 @@ bump_version() {
         --include-merged-tags \
         --no-git-commit $recommended_bump
     git add -u crates/ Cargo.lock
+    cd "$SCRIPT_DIR"
     yarn version --$recommended_bump
+    cd "$TARGET_DIR"
 }
 
 git_prep_push() {
@@ -65,7 +71,9 @@ git_prep_push() {
 }
 
 get_current_version() {
+    cd "$SCRIPT_DIR"
     yarn versions | grep $PROJECT | cut -d':' -f2 | cut -d"'" -f2
+    cd "$TARGET_DIR"
 }
 
 main

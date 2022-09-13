@@ -1,5 +1,7 @@
 #!/bin/bash
 
+START_DIR="$PWD"
+
 set -e -u -o pipefail
 
 main() {
@@ -7,9 +9,11 @@ main() {
 }
 
 exit_on_invalid_commit_msg() {
-    cat "$1" |
+    cd ./scripts
+    cat "../$1" |
         grep -v -e '^#' |
             yarn run lint:commit
+    cd "$START_DIR"
 }
 
 main "$1"
