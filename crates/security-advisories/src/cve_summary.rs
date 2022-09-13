@@ -14,6 +14,7 @@ use std::hash::{Hash, Hasher};
 pub struct CveSummary {
     pub id: String,
     pub is_known_exploited_vuln: Option<bool>,
+    pub tickets: Option<Vec<String>>,
     pub description: String,
     pub urls: Vec<String>,
 }
@@ -23,6 +24,7 @@ impl CveSummary {
         Self {
             id,
             is_known_exploited_vuln: None,
+            tickets: None,
             description,
             urls,
         }

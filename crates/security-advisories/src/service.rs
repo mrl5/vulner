@@ -78,7 +78,7 @@ pub async fn fetch_known_exploited_cves(client: &Client) -> Result<Vec<String>, 
 
 pub async fn get_distro_tracker_summary(
     client: &Client,
-    os: Box<dyn OsAdapter>,
+    os: &'_ dyn OsAdapter,
 ) -> Result<Vec<DistroTrackerSummary>, Box<dyn Error>> {
     if *os.get_os() != Os::GnuLinux {
         return Err(Box::new(IOError::from(ErrorKind::Unsupported)));
@@ -86,6 +86,23 @@ pub async fn get_distro_tracker_summary(
 
     match os.get_os_flavor() {
         Some(OsFlavor::LinuxDistro(&LinuxDistro::Funtoo)) => funtoo::get_vuln_tracker(client).await,
+        _ => Err(Box::new(IOError::from(ErrorKind::Unsupported))),
+    }
+}
+
+pub async fn get_distro_tickets_by_cve(
+    client: &Client,
+    os: &'_ dyn OsAdapter,
+    cve_id: String,
+) -> Result<Vec<String>, Box<dyn Error>> {
+    if *os.get_os() != Os::GnuLinux {
+        return Err(Box::new(IOError::from(ErrorKind::Unsupported)));
+    }
+
+    match os.get_os_flavor() {
+        Some(OsFlavor::LinuxDistro(&LinuxDistro::Funtoo)) => {
+            funtoo::get_tickets_by_cve(client, cve_id).await
+        }
         _ => Err(Box::new(IOError::from(ErrorKind::Unsupported))),
     }
 }

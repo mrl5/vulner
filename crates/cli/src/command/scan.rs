@@ -15,7 +15,7 @@ use reqwest::Client;
 use security_advisories::cve_summary::CveSummary;
 use security_advisories::http::get_client;
 use security_advisories::service::{
-    fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary,
+    fetch_cves_by_cpe, fetch_known_exploited_cves, get_cves_summary, get_distro_tickets_by_cve,
 };
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
@@ -31,6 +31,7 @@ pub async fn execute(
     pkg_dir: Option<PathBuf>,
     recursive: bool,
     api_keys: ApiKeys,
+    no_bugtracker: bool,
 ) -> Result<(), Box<dyn Error>> {
     // todo: progress bar
     let now = OffsetDateTime::now_utc();
@@ -60,6 +61,7 @@ pub async fn execute(
             &feed_dir,
             &known_exploited_cves,
             &api_keys,
+            no_bugtracker,
         )
         .await?;
     } else {
@@ -74,6 +76,7 @@ pub async fn execute(
                 &feed_dir,
                 &known_exploited_cves,
                 &api_keys,
+                no_bugtracker,
             )
             .await?;
         }
@@ -90,6 +93,7 @@ async fn scan(
     feed_dir: &Path,
     known_exploited_cves: &[String],
     api_keys: &ApiKeys,
+    no_bugtracker: bool,
 ) -> Result<(), Box<dyn Error>> {
     log::info!("listing all catpkgs ...");
     let catpkgs = os.get_all_catpkgs()?;
@@ -114,6 +118,12 @@ async fn scan(
             .par_iter()
             .map(|(pkg, re_pattern)| match_cpes(&feed_buffer, pkg, re_pattern))
             .collect_into_vec(&mut result_buffer);
+
+        let mut os_adapter = None;
+        if !no_bugtracker {
+            os_adapter = Some(os);
+        }
+
         handle_pkgs(
             client,
             &cwd,
@@ -121,6 +131,7 @@ async fn scan(
             &result_buffer,
             known_exploited_cves,
             api_keys,
+            os_adapter,
         )
         .await?;
     }
@@ -159,6 +170,7 @@ async fn handle_pkgs(
     pkgs: &[HashMap<&Package, HashSet<String>>],
     known_exploited_cves: &[String],
     api_keys: &ApiKeys,
+    os: Option<&'_ dyn OsAdapter>,
 ) -> Result<(), Box<dyn Error>> {
     let mut any_cpes = false;
     for items in pkgs {
@@ -183,6 +195,7 @@ async fn handle_pkgs(
                 matches,
                 known_exploited_cves,
                 api_keys,
+                os,
             )
             .await?;
         }
@@ -205,6 +218,7 @@ async fn handle_cves(
     matches: &HashSet<String>,
     known_exploited_cves: &[String],
     api_keys: &ApiKeys,
+    os: Option<&'_ dyn OsAdapter>,
 ) -> Result<(), Box<dyn Error>> {
     let mut already_notified = false;
     let mut cves: HashSet<CveSummary> = HashSet::new();
@@ -213,7 +227,10 @@ async fn handle_cves(
         match fetch_cves_by_cpe(client, cpe, api_keys).await {
             Ok(res) => match get_cves_summary(&res, Some(known_exploited_cves)) {
                 Ok(summary) => {
-                    for cve in summary {
+                    for mut cve in summary {
+                        if let Some(os_adapter) = os {
+                            cve.tickets = get_distro_tickets(client, os_adapter, &cve.id).await;
+                        }
                         cves.insert(cve);
                     }
                 }
@@ -259,4 +276,15 @@ fn write_report(
     }
 
     Ok(())
+}
+
+async fn get_distro_tickets(
+    client: &Client,
+    os: &'_ dyn OsAdapter,
+    cve_id: &String,
+) -> Option<Vec<String>> {
+    match get_distro_tickets_by_cve(client, os, cve_id.to_owned()).await {
+        Ok(tickets) => Some(tickets),
+        Err(_) => None,
+    }
 }

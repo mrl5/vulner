@@ -14,7 +14,7 @@ use std::error::Error;
 pub async fn execute() -> Result<(), Box<dyn Error>> {
     let os = get_adapter(None, None)?;
     let client = get_client()?;
-    let tracker_summary = get_distro_tracker_summary(&client, os).await?;
+    let tracker_summary = get_distro_tracker_summary(&client, &*os).await?;
 
     println!("{}", to_string(&tracker_summary)?);
     Ok(())
