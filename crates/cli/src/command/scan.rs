@@ -40,7 +40,7 @@ pub async fn execute(
         format!("{:02}:{:02}:{:02}Z", now.hour(), now.minute(), now.second()),
     ];
     let out_dir = out_dir.join(date).join(time);
-    let client = get_client()?;
+    let client = get_client(Some(format!("vulner {}", env!("CARGO_PKG_VERSION"))))?;
 
     log::info!("working in {:?} ...", out_dir);
     create_dir_all(&out_dir)?;

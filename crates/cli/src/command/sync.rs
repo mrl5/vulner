@@ -16,7 +16,7 @@ use tokio::fs::create_dir_all;
 use tokio::join;
 
 pub async fn execute(feed_path: PathBuf) -> Result<(), Box<dyn Error>> {
-    let client = get_client()?;
+    let client = get_client(Some(format!("vulner {}", env!("CARGO_PKG_VERSION"))))?;
     create_dir_all(&feed_path).await?;
 
     let file_path = feed_path.join(CPE_MATCH_FEED);

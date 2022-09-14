@@ -25,7 +25,7 @@ pub async fn execute(
     let json = from_str(&batch)?;
     validate_cpe_batch(&json)?;
 
-    let client = get_client()?;
+    let client = get_client(Some(format!("vulner {}", env!("CARGO_PKG_VERSION"))))?;
     let mut feed = vec![];
     if check_known_exploited {
         feed = fetch_known_exploited_cves(&client).await?;
