@@ -27,7 +27,7 @@ pub struct ApiKeys {
 impl std::default::Default for VulnerConfig {
     fn default() -> Self {
         let home_dir = env::var("HOME").unwrap_or_else(|_| "/tmp".to_owned());
-        let vulner_dir = Path::new(&home_dir).join(crate::NAME);
+        let vulner_dir = Path::new(&home_dir).join(env!("CARGO_BIN_NAME"));
 
         Self {
             version: 0,

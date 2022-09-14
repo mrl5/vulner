@@ -13,7 +13,11 @@ use std::error::Error;
 
 pub async fn execute() -> Result<(), Box<dyn Error>> {
     let os = get_adapter(None, None)?;
-    let client = get_client(Some(format!("vulner {}", env!("CARGO_PKG_VERSION"))))?;
+    let client = get_client(Some(format!(
+        "{} {}",
+        env!("CARGO_BIN_NAME"),
+        env!("CARGO_PKG_VERSION")
+    )))?;
     let tracker_summary = get_distro_tracker_summary(&client, &*os).await?;
 
     println!("{}", to_string(&tracker_summary)?);

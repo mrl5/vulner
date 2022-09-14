@@ -13,11 +13,9 @@ mod conf;
 mod input;
 mod utils;
 
-const NAME: &str = "vulner";
-
 #[derive(Debug, StructOpt)]
 #[structopt(
-    name = NAME,
+    name = env!("CARGO_BIN_NAME"),
     about = env!("CARGO_PKG_DESCRIPTION"),
     global_settings(&[
       AppSettings::ColoredHelp
