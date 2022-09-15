@@ -1,6 +1,6 @@
 [package]
 name = "security-advisories"
-version = "0.5.2"
+version = "0.6.0"
 authors = ["mrl5"]
 edition = "2021"
 description = "Interacts with security advisory services"

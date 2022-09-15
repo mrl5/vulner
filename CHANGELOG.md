@@ -1,3 +1,18 @@
+# [0.7.0](https://github.com/mrl5/vulner/compare/v0.6.2...v0.7.0) (2022-09-15)
+
+
+### Bug Fixes
+
+* **cargo:** errors for serde derive [[#61](https://github.com/mrl5/vulner/issues/61)] ([41a6303](https://github.com/mrl5/vulner/commit/41a630366ac99a7948ca79b1972921388f8617ab))
+
+
+### Features
+
+* **cli:** tracker - new command that prints contents of OS vulnerability tracker [[#30](https://github.com/mrl5/vulner/issues/30)] ([12320f7](https://github.com/mrl5/vulner/commit/12320f7b682da530086942051a9c0820cd96de41))
+* **scan:** include Funtoo bugtracker tickets for detected CVEs [[#30](https://github.com/mrl5/vulner/issues/30)] ([825c867](https://github.com/mrl5/vulner/commit/825c86798a667aa0a36e19d76fb1097003843e05))
+
+
+
 ## [0.6.2](https://github.com/mrl5/vulner/compare/v0.6.1...v0.6.2) (2022-07-24)
 
 
