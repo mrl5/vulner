@@ -208,7 +208,7 @@ dependencies = [
 
 [[package]]
 name = "cli"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "atty",
  "confy",
@@ -276,7 +276,7 @@ checksum = "e496a50fda8aacccc86d7529e2c1e0892dbd0f898a6b5645b5561b89c3210efa"
 
 [[package]]
 name = "cpe-tag"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "grep-matcher",
  "grep-regex",
@@ -1191,7 +1191,7 @@ dependencies = [
 
 [[package]]
 name = "os-adapter"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "log",
  "package-model",
@@ -1199,7 +1199,7 @@ dependencies = [
 
 [[package]]
 name = "package-model"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "lazy_static",
  "regex",
@@ -1562,7 +1562,7 @@ dependencies = [
 
 [[package]]
 name = "security-advisories"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "futures-core",
  "futures-util",

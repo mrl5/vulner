@@ -1,3 +1,12 @@
+## [0.7.1](https://github.com/mrl5/vulner/compare/v0.7.0...v0.7.1) (2023-07-11)
+
+
+### Bug Fixes
+
+* dependabot vulnerability alerts ([78eaa62](https://github.com/mrl5/vulner/commit/78eaa62b09f11a1f0d5133a4b17afd266f8a23b6))
+
+
+
 # [0.7.0](https://github.com/mrl5/vulner/compare/v0.6.2...v0.7.0) (2022-09-15)
 
 
