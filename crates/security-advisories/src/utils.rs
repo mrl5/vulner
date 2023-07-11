@@ -12,6 +12,7 @@ pub fn get_progress_bar(total_size: u64, url: &str) -> ProgressBar {
     pb.set_style(ProgressStyle::default_bar()
         .template("{msg}
 {spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({bytes_per_sec}, {eta})")
+        .expect("progress bar template error")
         .progress_chars("=> "));
     pb.set_message(format!("Downloading {}", url));
     pb

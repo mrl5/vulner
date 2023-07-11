@@ -19,7 +19,7 @@ mod sync;
 mod tracker;
 
 pub async fn execute(cmd: Command) -> Result<(), Box<dyn Error>> {
-    let cfg: conf::VulnerConfig = load(env!("CARGO_BIN_NAME")).unwrap_or_default();
+    let cfg: conf::VulnerConfig = load(env!("CARGO_BIN_NAME"), "vulner").unwrap_or_default();
     log::debug!("loaded cfg {:#?}", cfg);
 
     match cmd {

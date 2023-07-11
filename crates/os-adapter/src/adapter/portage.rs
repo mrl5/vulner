@@ -41,7 +41,7 @@ where
             log::info!("walking {:?} ...", &self.get_pkg_dir().as_os_str());
         }
 
-        for category in read_dir(&self.get_pkg_dir())? {
+        for category in read_dir(self.get_pkg_dir())? {
             let category = category?;
             let cat_path = &category.path();
 

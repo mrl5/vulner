@@ -71,7 +71,7 @@ pub async fn execute(
     } else {
         let mut os = get_adapter(None, Some(true))?;
         let kits_dir = &pkg_dir.unwrap().join("kits");
-        for kit in read_dir(&kits_dir)? {
+        for kit in read_dir(kits_dir)? {
             os.set_pkg_dir(kit?.path());
             scan(
                 &*os,
