@@ -235,7 +235,7 @@ checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 
 [[package]]
 name = "cpe-tag"
-version = "0.4.0"
+version = "0.7.0"
 dependencies = [
  "grep-matcher",
  "grep-regex",
@@ -1103,7 +1103,7 @@ dependencies = [
 
 [[package]]
 name = "os-adapter"
-version = "0.5.0"
+version = "0.7.0"
 dependencies = [
  "log",
  "package-model",
@@ -1111,7 +1111,7 @@ dependencies = [
 
 [[package]]
 name = "package-model"
-version = "0.2.0"
+version = "0.7.0"
 dependencies = [
  "lazy_static",
  "regex",
@@ -1463,7 +1463,7 @@ dependencies = [
 
 [[package]]
 name = "security-advisories"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "futures-core",
  "futures-util",

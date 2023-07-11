@@ -1,16 +1,13 @@
 [package]
 name = "package-model"
-version = "0.2.0"
-authors = ["mrl5"]
-edition = "2021"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
 description = "Package model"
-license = "MPL-2.0"
+license.workspace = true
 keywords = ["package", "model"]
 
-[package.metadata.workspaces]
-independent = true
-
 [dependencies]
-regex = "1.5.5"
-lazy_static = "1.4.0"
-serde = { version = "1.0.136",  features = ["derive"] }
+lazy_static.workspace = true
+regex.workspace = true
+serde.workspace = true
